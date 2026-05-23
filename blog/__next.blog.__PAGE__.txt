@@ -1,0 +1,517 @@
+1:"$Sreact.fragment"
+2:I[52823,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/59442ea7f9348b2b.js"],"default"]
+3:I[97690,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/59442ea7f9348b2b.js"],"BlogList"]
+12:I[26487,["/_next/static/chunks/77e7100737f17bb7.js","/_next/static/chunks/f91053d8cc2847b4.js"],"OutletBoundary"]
+13:"$Sreact.suspense"
+4:T519,# Testing React Applications: A Practical Guide
+
+Tests are your safety net — they let you refactor with confidence and ship changes without fear. The goal is not “as many tests as possible”; it’s <mark>confidence in the critical paths</mark>.
+
+If your test suite feels slow or fragile, it usually means you’re testing the wrong thing. In practice, you can ignore a lot of “perfect coverage” advice and focus on a few high-signal habits.
+
+## What to test (a simple rule)
+
+- **Unit tests**: small, fast checks for logic and pure functions.
+- **Integration tests**: components + data + user flows (most value per test).
+- **E2E tests**: a few happy-path checks across the whole app.
+
+## High-signal testing habits
+
+- Prefer user-facing assertions (what the user sees/does).
+- Use accessible queries first (roles, labels).
+- Mock at the boundary (network) instead of mocking implementation details.
+
+## Things to avoid
+
+- ~~Testing internal component state~~ when behavior is what matters.
+- ~~Sprinkling test IDs everywhere~~ as a first choice.
+- Overusing snapshots that fail for harmless UI changes.
+
+## Wrap-up
+
+Start small: one integration test for your most important flow, then add unit tests for tricky logic. Over time, your tests become living documentation that helps you move faster.5:Tc4c,var Component=(()=>{var u=Object.create;var r=Object.defineProperty;var g=Object.getOwnPropertyDescriptor;var f=Object.getOwnPropertyNames;var p=Object.getPrototypeOf,m=Object.prototype.hasOwnProperty;var y=(t,e)=>()=>(e||t((e={exports:{}}).exports,e),e.exports),w=(t,e)=>{for(var i in e)r(t,i,{get:e[i],enumerable:!0})},a=(t,e,i,l)=>{if(e&&typeof e=="object"||typeof e=="function")for(let s of f(e))!m.call(t,s)&&s!==i&&r(t,s,{get:()=>e[s],enumerable:!(l=g(e,s))||l.enumerable});return t};var v=(t,e,i)=>(i=t!=null?u(p(t)):{},a(e||!t||!t.__esModule?r(i,"default",{value:t,enumerable:!0}):i,t)),b=t=>a(r({},"__esModule",{value:!0}),t);var c=y((_,o)=>{o.exports=_jsx_runtime});var k={};w(k,{default:()=>d});var n=v(c());function h(t){let e={del:"del",h1:"h1",h2:"h2",li:"li",p:"p",strong:"strong",ul:"ul",...t.components};return(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(e.h1,{children:"Testing React Applications: A Practical Guide"}),`
+`,(0,n.jsxs)(e.p,{children:["Tests are your safety net \u2014 they let you refactor with confidence and ship changes without fear. The goal is not \u201Cas many tests as possible\u201D; it\u2019s ",(0,n.jsx)("mark",{children:"confidence in the critical paths"}),"."]}),`
+`,(0,n.jsx)(e.p,{children:"If your test suite feels slow or fragile, it usually means you\u2019re testing the wrong thing. In practice, you can ignore a lot of \u201Cperfect coverage\u201D advice and focus on a few high-signal habits."}),`
+`,(0,n.jsx)(e.h2,{children:"What to test (a simple rule)"}),`
+`,(0,n.jsxs)(e.ul,{children:[`
+`,(0,n.jsxs)(e.li,{children:[(0,n.jsx)(e.strong,{children:"Unit tests"}),": small, fast checks for logic and pure functions."]}),`
+`,(0,n.jsxs)(e.li,{children:[(0,n.jsx)(e.strong,{children:"Integration tests"}),": components + data + user flows (most value per test)."]}),`
+`,(0,n.jsxs)(e.li,{children:[(0,n.jsx)(e.strong,{children:"E2E tests"}),": a few happy-path checks across the whole app."]}),`
+`]}),`
+`,(0,n.jsx)(e.h2,{children:"High-signal testing habits"}),`
+`,(0,n.jsxs)(e.ul,{children:[`
+`,(0,n.jsx)(e.li,{children:"Prefer user-facing assertions (what the user sees/does)."}),`
+`,(0,n.jsx)(e.li,{children:"Use accessible queries first (roles, labels)."}),`
+`,(0,n.jsx)(e.li,{children:"Mock at the boundary (network) instead of mocking implementation details."}),`
+`]}),`
+`,(0,n.jsx)(e.h2,{children:"Things to avoid"}),`
+`,(0,n.jsxs)(e.ul,{children:[`
+`,(0,n.jsxs)(e.li,{children:[(0,n.jsx)(e.del,{children:"Testing internal component state"})," when behavior is what matters."]}),`
+`,(0,n.jsxs)(e.li,{children:[(0,n.jsx)(e.del,{children:"Sprinkling test IDs everywhere"})," as a first choice."]}),`
+`,(0,n.jsx)(e.li,{children:"Overusing snapshots that fail for harmless UI changes."}),`
+`]}),`
+`,(0,n.jsx)(e.h2,{children:"Wrap-up"}),`
+`,(0,n.jsx)(e.p,{children:"Start small: one integration test for your most important flow, then add unit tests for tricky logic. Over time, your tests become living documentation that helps you move faster."})]})}function d(t={}){let{wrapper:e}=t.components||{};return e?(0,n.jsx)(e,{...t,children:(0,n.jsx)(h,{...t})}):h(t)}return b(k);})();
+;return Component;6:T45b,# REST API Design Principles That Stand the Test of Time
+
+Great APIs feel boring in the best way: predictable, consistent, and easy to reason about. When the surface area is simple, teams ship faster and clients break less often.
+
+This is a lightweight checklist you can keep in mind while designing new endpoints or reviewing an existing API.
+
+## Core principles
+
+- Use clear, consistent **resource names** (think nouns).
+- Keep behavior aligned with **HTTP semantics** (read vs write).
+- Return **consistent response shapes** so clients don’t guess.
+- Prefer **sane defaults** with optional query parameters for filtering/sorting.
+
+## A simple checklist
+
+1. Pick stable resource paths (plural nouns are a common convention).
+2. Use a small set of status codes consistently.
+3. Document pagination and what “next/previous” means.
+4. Be explicit about authentication and authorization requirements.
+5. Add brief examples in docs for the “happy path” and common errors.
+
+## Wrap-up
+
+If you optimize for consistency first, your API will be easier to document, easier to test, and easier for others to adopt.7:Tb17,var Component=(()=>{var p=Object.create;var r=Object.defineProperty;var u=Object.getOwnPropertyDescriptor;var m=Object.getOwnPropertyNames;var g=Object.getPrototypeOf,f=Object.prototype.hasOwnProperty;var x=(i,e)=>()=>(e||i((e={exports:{}}).exports,e),e.exports),w=(i,e)=>{for(var t in e)r(i,t,{get:e[t],enumerable:!0})},l=(i,e,t,o)=>{if(e&&typeof e=="object"||typeof e=="function")for(let s of m(e))!f.call(i,s)&&s!==t&&r(i,s,{get:()=>e[s],enumerable:!(o=u(e,s))||o.enumerable});return i};var b=(i,e,t)=>(t=i!=null?p(g(i)):{},l(e||!i||!i.__esModule?r(t,"default",{value:i,enumerable:!0}):t,i)),y=i=>l(r({},"__esModule",{value:!0}),i);var c=x((_,a)=>{a.exports=_jsx_runtime});var P={};w(P,{default:()=>d});var n=b(c());function h(i){let e={h1:"h1",h2:"h2",li:"li",ol:"ol",p:"p",strong:"strong",ul:"ul",...i.components};return(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(e.h1,{children:"REST API Design Principles That Stand the Test of Time"}),`
+`,(0,n.jsx)(e.p,{children:"Great APIs feel boring in the best way: predictable, consistent, and easy to reason about. When the surface area is simple, teams ship faster and clients break less often."}),`
+`,(0,n.jsx)(e.p,{children:"This is a lightweight checklist you can keep in mind while designing new endpoints or reviewing an existing API."}),`
+`,(0,n.jsx)(e.h2,{children:"Core principles"}),`
+`,(0,n.jsxs)(e.ul,{children:[`
+`,(0,n.jsxs)(e.li,{children:["Use clear, consistent ",(0,n.jsx)(e.strong,{children:"resource names"})," (think nouns)."]}),`
+`,(0,n.jsxs)(e.li,{children:["Keep behavior aligned with ",(0,n.jsx)(e.strong,{children:"HTTP semantics"})," (read vs write)."]}),`
+`,(0,n.jsxs)(e.li,{children:["Return ",(0,n.jsx)(e.strong,{children:"consistent response shapes"})," so clients don\u2019t guess."]}),`
+`,(0,n.jsxs)(e.li,{children:["Prefer ",(0,n.jsx)(e.strong,{children:"sane defaults"})," with optional query parameters for filtering/sorting."]}),`
+`]}),`
+`,(0,n.jsx)(e.h2,{children:"A simple checklist"}),`
+`,(0,n.jsxs)(e.ol,{children:[`
+`,(0,n.jsx)(e.li,{children:"Pick stable resource paths (plural nouns are a common convention)."}),`
+`,(0,n.jsx)(e.li,{children:"Use a small set of status codes consistently."}),`
+`,(0,n.jsx)(e.li,{children:"Document pagination and what \u201Cnext/previous\u201D means."}),`
+`,(0,n.jsx)(e.li,{children:"Be explicit about authentication and authorization requirements."}),`
+`,(0,n.jsx)(e.li,{children:"Add brief examples in docs for the \u201Chappy path\u201D and common errors."}),`
+`]}),`
+`,(0,n.jsx)(e.h2,{children:"Wrap-up"}),`
+`,(0,n.jsx)(e.p,{children:"If you optimize for consistency first, your API will be easier to document, easier to test, and easier for others to adopt."})]})}function d(i={}){let{wrapper:e}=i.components||{};return e?(0,n.jsx)(e,{...i,children:(0,n.jsx)(h,{...i})}):h(i)}return y(P);})();
+;return Component;8:Tb2b,var Component=(()=>{var u=Object.create;var t=Object.defineProperty;var m=Object.getOwnPropertyDescriptor;var p=Object.getOwnPropertyNames;var f=Object.getPrototypeOf,w=Object.prototype.hasOwnProperty;var g=(i,e)=>()=>(e||i((e={exports:{}}).exports,e),e.exports),y=(i,e)=>{for(var r in e)t(i,r,{get:e[r],enumerable:!0})},a=(i,e,r,s)=>{if(e&&typeof e=="object"||typeof e=="function")for(let l of p(e))!w.call(i,l)&&l!==r&&t(i,l,{get:()=>e[l],enumerable:!(s=m(e,l))||s.enumerable});return i};var x=(i,e,r)=>(r=i!=null?u(f(i)):{},a(e||!i||!i.__esModule?t(r,"default",{value:i,enumerable:!0}):r,i)),b=i=>a(t({},"__esModule",{value:!0}),i);var c=g((_,o)=>{o.exports=_jsx_runtime});var k={};y(k,{default:()=>d});var n=x(c());function h(i){let e={code:"code",h1:"h1",h2:"h2",li:"li",ol:"ol",p:"p",ul:"ul",...i.components};return(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(e.h1,{children:"Git Workflow Guide: From Chaos to Clarity"}),`
+`,(0,n.jsx)(e.p,{children:"Git is powerful, but teams usually struggle because they don\u2019t agree on a few basics. A simple workflow keeps history readable, reviews focused, and releases less stressful."}),`
+`,(0,n.jsx)(e.p,{children:"This is a lightweight guide you can adopt in a day and iterate on later."}),`
+`,(0,n.jsx)(e.h2,{children:"A simple team workflow"}),`
+`,(0,n.jsxs)(e.ul,{children:[`
+`,(0,n.jsxs)(e.li,{children:["Branch from ",(0,n.jsx)(e.code,{children:"main"})," for every change."]}),`
+`,(0,n.jsx)(e.li,{children:"Keep branches small and short-lived."}),`
+`,(0,n.jsx)(e.li,{children:"Open a pull request early and ask for review."}),`
+`,(0,n.jsxs)(e.li,{children:["Merge back to ",(0,n.jsx)(e.code,{children:"main"})," once tests pass."]}),`
+`]}),`
+`,(0,n.jsx)(e.h2,{children:"Commit message tips"}),`
+`,(0,n.jsxs)(e.ul,{children:[`
+`,(0,n.jsx)(e.li,{children:"Start with a clear verb (\u201Cadd\u201D, \u201Cfix\u201D, \u201Cremove\u201D, \u201Crefactor\u201D)."}),`
+`,(0,n.jsx)(e.li,{children:"Keep the first line short and specific."}),`
+`,(0,n.jsx)(e.li,{children:"Prefer multiple small commits over one giant \u201CWIP\u201D."}),`
+`]}),`
+`,(0,n.jsx)(e.h2,{children:"PR checklist"}),`
+`,(0,n.jsxs)(e.ol,{children:[`
+`,(0,n.jsx)(e.li,{children:"Explain what changed and why."}),`
+`,(0,n.jsx)(e.li,{children:"Link the issue or describe the user impact."}),`
+`,(0,n.jsx)(e.li,{children:"Add tests (or explain why not)."}),`
+`,(0,n.jsx)(e.li,{children:"Keep the diff small enough to review quickly."}),`
+`]}),`
+`,(0,n.jsx)(e.h2,{children:"Wrap-up"}),`
+`,(0,n.jsx)(e.p,{children:"The goal isn\u2019t \u201Cperfect Git\u201D \u2014 it\u2019s fewer surprises and faster collaboration. Start simple, write down the rules, and improve them as your team grows."})]})}function d(i={}){let{wrapper:e}=i.components||{};return e?(0,n.jsx)(e,{...i,children:(0,n.jsx)(h,{...i})}):h(i)}return b(k);})();
+;return Component;9:T44a,# TypeScript Best Practices for Clean, Maintainable Code
+
+TypeScript shines when it helps you model reality — not when it forces you to fight types all day. A few small defaults can make a codebase feel <mark>calmer, safer, and easier to refactor</mark>.
+
+<MediaContainer
+  src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&fit=crop"
+  alt="TypeScript code on screen"
+/>
+
+## Practical rules of thumb
+
+- Turn on strictness and fix the sharp edges early.
+- Prefer readable types over clever types.
+- Use unions for “one of these”, interfaces for “shape of this”.
+- Avoid `any` as a shortcut; it becomes ~~future debt~~ fast.
+
+## One pattern worth memorizing
+
+```ts
+type Result<T> =
+  | { ok: true; value: T }
+  | { ok: false; error: string };
+
+export function parseNumber(input: string): Result<number> {
+  const n = Number(input);
+  return Number.isFinite(n) ? { ok: true, value: n } : { ok: false, error: "Not a number" };
+}
+```
+
+## Wrap-up
+
+The best TypeScript code reads like good documentation: clear names, predictable shapes, and errors that point you to the fix.a:Tb09,var Component=(()=>{var p=Object.create;var i=Object.defineProperty;var u=Object.getOwnPropertyDescriptor;var f=Object.getOwnPropertyNames;var m=Object.getPrototypeOf,y=Object.prototype.hasOwnProperty;var b=(n,e)=>()=>(e||n((e={exports:{}}).exports,e),e.exports),g=(n,e)=>{for(var t in e)i(n,t,{get:e[t],enumerable:!0})},s=(n,e,t,a)=>{if(e&&typeof e=="object"||typeof e=="function")for(let o of f(e))!y.call(n,o)&&o!==t&&i(n,o,{get:()=>e[o],enumerable:!(a=u(e,o))||a.enumerable});return n};var x=(n,e,t)=>(t=n!=null?p(m(n)):{},s(e||!n||!n.__esModule?i(t,"default",{value:n,enumerable:!0}):t,n)),k=n=>s(i({},"__esModule",{value:!0}),n);var l=b((M,c)=>{c.exports=_jsx_runtime});var T={};g(T,{default:()=>h});var r=x(l());function d(n){let e={code:"code",del:"del",h1:"h1",h2:"h2",li:"li",p:"p",pre:"pre",ul:"ul",...n.components},{MediaContainer:t}=e;return t||w("MediaContainer",!0),(0,r.jsxs)(r.Fragment,{children:[(0,r.jsx)(e.h1,{children:"TypeScript Best Practices for Clean, Maintainable Code"}),`
+`,(0,r.jsxs)(e.p,{children:["TypeScript shines when it helps you model reality \u2014 not when it forces you to fight types all day. A few small defaults can make a codebase feel ",(0,r.jsx)("mark",{children:"calmer, safer, and easier to refactor"}),"."]}),`
+`,(0,r.jsx)(t,{src:"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&fit=crop",alt:"TypeScript code on screen"}),`
+`,(0,r.jsx)(e.h2,{children:"Practical rules of thumb"}),`
+`,(0,r.jsxs)(e.ul,{children:[`
+`,(0,r.jsx)(e.li,{children:"Turn on strictness and fix the sharp edges early."}),`
+`,(0,r.jsx)(e.li,{children:"Prefer readable types over clever types."}),`
+`,(0,r.jsx)(e.li,{children:"Use unions for \u201Cone of these\u201D, interfaces for \u201Cshape of this\u201D."}),`
+`,(0,r.jsxs)(e.li,{children:["Avoid ",(0,r.jsx)(e.code,{children:"any"})," as a shortcut; it becomes ",(0,r.jsx)(e.del,{children:"future debt"})," fast."]}),`
+`]}),`
+`,(0,r.jsx)(e.h2,{children:"One pattern worth memorizing"}),`
+`,(0,r.jsx)(e.pre,{children:(0,r.jsx)(e.code,{className:"language-ts",children:`type Result<T> =
+  | { ok: true; value: T }
+  | { ok: false; error: string };
+
+export function parseNumber(input: string): Result<number> {
+  const n = Number(input);
+  return Number.isFinite(n) ? { ok: true, value: n } : { ok: false, error: "Not a number" };
+}
+`})}),`
+`,(0,r.jsx)(e.h2,{children:"Wrap-up"}),`
+`,(0,r.jsx)(e.p,{children:"The best TypeScript code reads like good documentation: clear names, predictable shapes, and errors that point you to the fix."})]})}function h(n={}){let{wrapper:e}=n.components||{};return e?(0,r.jsx)(e,{...n,children:(0,r.jsx)(d,{...n})}):d(n)}function w(n,e){throw new Error("Expected "+(e?"component":"object")+" `"+n+"` to be defined: you likely forgot to import, pass, or provide it.")}return k(T);})();
+;return Component;b:Tcc8,var Component=(()=>{var m=Object.create;var i=Object.defineProperty;var p=Object.getOwnPropertyDescriptor;var u=Object.getOwnPropertyNames;var g=Object.getPrototypeOf,y=Object.prototype.hasOwnProperty;var b=(t,e)=>()=>(e||t((e={exports:{}}).exports,e),e.exports),x=(t,e)=>{for(var r in e)i(t,r,{get:e[r],enumerable:!0})},l=(t,e,r,a)=>{if(e&&typeof e=="object"||typeof e=="function")for(let d of u(e))!y.call(t,d)&&d!==r&&i(t,d,{get:()=>e[d],enumerable:!(a=p(e,d))||a.enumerable});return t};var f=(t,e,r)=>(r=t!=null?m(g(t)):{},l(e||!t||!t.__esModule?i(r,"default",{value:t,enumerable:!0}):r,t)),j=t=>l(i({},"__esModule",{value:!0}),t);var h=b((_,c)=>{c.exports=_jsx_runtime});var v={};x(v,{default:()=>s});var n=f(h());function o(t){let e={code:"code",h1:"h1",h2:"h2",p:"p",pre:"pre",table:"table",tbody:"tbody",td:"td",th:"th",thead:"thead",tr:"tr",...t.components};return(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(e.p,{children:"Performance isn't optional\u2014it's a feature. Here are battle-tested tips for optimizing Next.js apps."}),`
+`,(0,n.jsx)(e.h1,{children:"2. Optimize Images"}),`
+`,(0,n.jsxs)(e.p,{children:["Always use ",(0,n.jsx)(e.code,{children:"next/image"})]}),`
+`,(0,n.jsx)(e.pre,{children:(0,n.jsx)(e.code,{className:"language-tsx",children:`import Image from 'next/image';
+
+export function Hero() {
+  return (
+    <Image
+      src="/hero.jpg"
+      alt="Hero image"
+      width={1200}
+      height={600}
+      priority // Load immediately for LCP
+      placeholder="blur"
+      blurDataURL="data:image/jpeg;base64,..."
+    />
+  );
+}
+`})}),`
+`,(0,n.jsx)(e.h2,{children:"4. Implement Proper Caching"}),`
+`,(0,n.jsxs)(e.table,{children:[(0,n.jsx)(e.thead,{children:(0,n.jsxs)(e.tr,{children:[(0,n.jsx)(e.th,{children:"Strategy"}),(0,n.jsx)(e.th,{children:"Use Case"}),(0,n.jsx)(e.th,{children:"TTL"})]})}),(0,n.jsxs)(e.tbody,{children:[(0,n.jsxs)(e.tr,{children:[(0,n.jsx)(e.td,{children:(0,n.jsx)(e.code,{children:"force-cache"})}),(0,n.jsx)(e.td,{children:"Static data"}),(0,n.jsx)(e.td,{children:"Forever"})]}),(0,n.jsxs)(e.tr,{children:[(0,n.jsx)(e.td,{children:(0,n.jsx)(e.code,{children:"revalidate: 3600"})}),(0,n.jsx)(e.td,{children:"Semi-static"}),(0,n.jsx)(e.td,{children:"1 hour"})]}),(0,n.jsxs)(e.tr,{children:[(0,n.jsx)(e.td,{children:(0,n.jsx)(e.code,{children:"revalidate: 60"})}),(0,n.jsx)(e.td,{children:"Frequently updated"}),(0,n.jsx)(e.td,{children:"1 minute"})]}),(0,n.jsxs)(e.tr,{children:[(0,n.jsx)(e.td,{children:(0,n.jsx)(e.code,{children:"no-store"})}),(0,n.jsx)(e.td,{children:"Real-time data"}),(0,n.jsx)(e.td,{children:"Never cache"})]})]})]}),`
+`,(0,n.jsx)(e.h2,{children:"5. Minimize Client Components"}),`
+`,(0,n.jsxs)(e.p,{children:["Every ",(0,n.jsx)(e.code,{children:"'use client'"})," directive adds to your JavaScript bundle. Keep client components small and focused:"]}),`
+`,(0,n.jsx)(e.h2,{children:"6. Bundle Analysis"}),`
+`,(0,n.jsx)(e.pre,{children:(0,n.jsx)(e.code,{className:"language-bash","data-meta":'title="terminal"',"data-title":"terminal",children:`# Install analyzer
+npm install @next/bundle-analyzer
+
+# Run analysis
+ANALYZE=true npm run build
+`})})]})}function s(t={}){let{wrapper:e}=t.components||{};return e?(0,n.jsx)(e,{...t,children:(0,n.jsx)(o,{...t})}):o(t)}return j(v);})();
+;return Component;c:Tc65,Design systems are the backbone of consistent user interfaces. Here's how to build one that scales.
+
+## Why Design Systems Matter
+
+A well-crafted design system provides:
+
+- **Consistency** across all products
+- **Faster development** with reusable components
+- **Better collaboration** between designers and developers
+- **Reduced technical debt** over time
+
+## Core Principles
+
+### 1. Start with Tokens
+
+Design tokens are the atomic values of your system:
+
+```typescript title="tokens.ts"
+export const tokens = {
+  colors: {
+    primary: {
+      50: '#eff6ff',
+      500: '#3b82f6',
+      900: '#1e3a8a',
+    },
+    neutral: {
+      0: '#ffffff',
+      100: '#f5f5f5',
+      900: '#171717',
+    },
+  },
+  spacing: {
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '1rem',
+    lg: '1.5rem',
+    xl: '2rem',
+  },
+  radii: {
+    sm: '0.25rem',
+    md: '0.5rem',
+    lg: '1rem',
+    full: '9999px',
+  },
+} as const;
+```
+
+### 2. Build Primitive Components
+
+Start with the basics:
+
+```tsx title="Button.tsx"
+import { cva, type VariantProps } from "class-variance-authority";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+  {
+    variants: {
+      variant: {
+        primary: "bg-primary text-white hover:bg-primary/90",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+      },
+      size: {
+        sm: "h-8 px-3 text-sm",
+        md: "h-10 px-4",
+        lg: "h-12 px-6 text-lg",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+    },
+  }
+);
+
+interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {}
+
+export function Button({ variant, size, className, ...props }: ButtonProps) {
+  return (
+    <button className={buttonVariants({ variant, size, className })} {...props} />
+  );
+}
+```
+
+## Component Composition
+
+Build complex components from primitives:
+
+| Level | Examples | Purpose |
+|-------|----------|---------|
+| Tokens | Colors, spacing, typography | Foundation |
+| Primitives | Button, Input, Badge | Building blocks |
+| Patterns | Card, Modal, Dropdown | Common UI patterns |
+| Templates | PageHeader, Sidebar | Layout structures |
+
+## Documentation is Key
+
+> "A design system without documentation is just a component library."
+
+Every component should include:
+
+1. **Usage examples** - Show common use cases
+2. **Props documentation** - Explain all options
+3. **Accessibility notes** - ARIA labels, keyboard nav
+4. **Do's and Don'ts** - Guide proper usage
+
+## Versioning Strategy
+
+```json title="package.json"
+{
+  "name": "@company/design-system",
+  "version": "2.1.0",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "tailwindcss": "^3.0.0"
+  }
+}
+```
+
+Use semantic versioning:
+- **Major**: Breaking changes
+- **Minor**: New features (backward compatible)
+- **Patch**: Bug fixes
+
+## Conclusion
+
+Building a design system is an investment that pays dividends in:
+
+- Developer productivity
+- Design consistency
+- User experience
+- Team collaboration
+
+Start small, iterate often, and document everything.d:T1a9e,var Component=(()=>{var m=Object.create;var s=Object.defineProperty;var p=Object.getOwnPropertyDescriptor;var u=Object.getOwnPropertyNames;var g=Object.getPrototypeOf,y=Object.prototype.hasOwnProperty;var b=(t,n)=>()=>(n||t((n={exports:{}}).exports,n),n.exports),f=(t,n)=>{for(var r in n)s(t,r,{get:n[r],enumerable:!0})},l=(t,n,r,o)=>{if(n&&typeof n=="object"||typeof n=="function")for(let i of u(n))!y.call(t,i)&&i!==r&&s(t,i,{get:()=>n[i],enumerable:!(o=p(n,i))||o.enumerable});return t};var x=(t,n,r)=>(r=t!=null?m(g(t)):{},l(n||!t||!t.__esModule?s(r,"default",{value:t,enumerable:!0}):r,t)),v=t=>l(s({},"__esModule",{value:!0}),t);var c=b((w,a)=>{a.exports=_jsx_runtime});var k={};f(k,{default:()=>h});var e=x(c());function d(t){let n={blockquote:"blockquote",code:"code",h2:"h2",h3:"h3",li:"li",ol:"ol",p:"p",pre:"pre",strong:"strong",table:"table",tbody:"tbody",td:"td",th:"th",thead:"thead",tr:"tr",ul:"ul",...t.components};return(0,e.jsxs)(e.Fragment,{children:[(0,e.jsx)(n.p,{children:"Design systems are the backbone of consistent user interfaces. Here's how to build one that scales."}),`
+`,(0,e.jsx)(n.h2,{children:"Why Design Systems Matter"}),`
+`,(0,e.jsx)(n.p,{children:"A well-crafted design system provides:"}),`
+`,(0,e.jsxs)(n.ul,{children:[`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Consistency"})," across all products"]}),`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Faster development"})," with reusable components"]}),`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Better collaboration"})," between designers and developers"]}),`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Reduced technical debt"})," over time"]}),`
+`]}),`
+`,(0,e.jsx)(n.h2,{children:"Core Principles"}),`
+`,(0,e.jsx)(n.h3,{children:"1. Start with Tokens"}),`
+`,(0,e.jsx)(n.p,{children:"Design tokens are the atomic values of your system:"}),`
+`,(0,e.jsx)(n.pre,{children:(0,e.jsx)(n.code,{className:"language-typescript","data-meta":'title="tokens.ts"',"data-title":"tokens.ts",children:`export const tokens = {
+  colors: {
+    primary: {
+      50: '#eff6ff',
+      500: '#3b82f6',
+      900: '#1e3a8a',
+    },
+    neutral: {
+      0: '#ffffff',
+      100: '#f5f5f5',
+      900: '#171717',
+    },
+  },
+  spacing: {
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '1rem',
+    lg: '1.5rem',
+    xl: '2rem',
+  },
+  radii: {
+    sm: '0.25rem',
+    md: '0.5rem',
+    lg: '1rem',
+    full: '9999px',
+  },
+} as const;
+`})}),`
+`,(0,e.jsx)(n.h3,{children:"2. Build Primitive Components"}),`
+`,(0,e.jsx)(n.p,{children:"Start with the basics:"}),`
+`,(0,e.jsx)(n.pre,{children:(0,e.jsx)(n.code,{className:"language-tsx","data-meta":'title="Button.tsx"',"data-title":"Button.tsx",children:`import { cva, type VariantProps } from "class-variance-authority";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+  {
+    variants: {
+      variant: {
+        primary: "bg-primary text-white hover:bg-primary/90",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+      },
+      size: {
+        sm: "h-8 px-3 text-sm",
+        md: "h-10 px-4",
+        lg: "h-12 px-6 text-lg",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+    },
+  }
+);
+
+interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {}
+
+export function Button({ variant, size, className, ...props }: ButtonProps) {
+  return (
+    <button className={buttonVariants({ variant, size, className })} {...props} />
+  );
+}
+`})}),`
+`,(0,e.jsx)(n.h2,{children:"Component Composition"}),`
+`,(0,e.jsx)(n.p,{children:"Build complex components from primitives:"}),`
+`,(0,e.jsxs)(n.table,{children:[(0,e.jsx)(n.thead,{children:(0,e.jsxs)(n.tr,{children:[(0,e.jsx)(n.th,{children:"Level"}),(0,e.jsx)(n.th,{children:"Examples"}),(0,e.jsx)(n.th,{children:"Purpose"})]})}),(0,e.jsxs)(n.tbody,{children:[(0,e.jsxs)(n.tr,{children:[(0,e.jsx)(n.td,{children:"Tokens"}),(0,e.jsx)(n.td,{children:"Colors, spacing, typography"}),(0,e.jsx)(n.td,{children:"Foundation"})]}),(0,e.jsxs)(n.tr,{children:[(0,e.jsx)(n.td,{children:"Primitives"}),(0,e.jsx)(n.td,{children:"Button, Input, Badge"}),(0,e.jsx)(n.td,{children:"Building blocks"})]}),(0,e.jsxs)(n.tr,{children:[(0,e.jsx)(n.td,{children:"Patterns"}),(0,e.jsx)(n.td,{children:"Card, Modal, Dropdown"}),(0,e.jsx)(n.td,{children:"Common UI patterns"})]}),(0,e.jsxs)(n.tr,{children:[(0,e.jsx)(n.td,{children:"Templates"}),(0,e.jsx)(n.td,{children:"PageHeader, Sidebar"}),(0,e.jsx)(n.td,{children:"Layout structures"})]})]})]}),`
+`,(0,e.jsx)(n.h2,{children:"Documentation is Key"}),`
+`,(0,e.jsxs)(n.blockquote,{children:[`
+`,(0,e.jsx)(n.p,{children:'"A design system without documentation is just a component library."'}),`
+`]}),`
+`,(0,e.jsx)(n.p,{children:"Every component should include:"}),`
+`,(0,e.jsxs)(n.ol,{children:[`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Usage examples"})," - Show common use cases"]}),`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Props documentation"})," - Explain all options"]}),`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Accessibility notes"})," - ARIA labels, keyboard nav"]}),`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Do's and Don'ts"})," - Guide proper usage"]}),`
+`]}),`
+`,(0,e.jsx)(n.h2,{children:"Versioning Strategy"}),`
+`,(0,e.jsx)(n.pre,{children:(0,e.jsx)(n.code,{className:"language-json","data-meta":'title="package.json"',"data-title":"package.json",children:`{
+  "name": "@company/design-system",
+  "version": "2.1.0",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "tailwindcss": "^3.0.0"
+  }
+}
+`})}),`
+`,(0,e.jsx)(n.p,{children:"Use semantic versioning:"}),`
+`,(0,e.jsxs)(n.ul,{children:[`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Major"}),": Breaking changes"]}),`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Minor"}),": New features (backward compatible)"]}),`
+`,(0,e.jsxs)(n.li,{children:[(0,e.jsx)(n.strong,{children:"Patch"}),": Bug fixes"]}),`
+`]}),`
+`,(0,e.jsx)(n.h2,{children:"Conclusion"}),`
+`,(0,e.jsx)(n.p,{children:"Building a design system is an investment that pays dividends in:"}),`
+`,(0,e.jsxs)(n.ul,{children:[`
+`,(0,e.jsx)(n.li,{children:"Developer productivity"}),`
+`,(0,e.jsx)(n.li,{children:"Design consistency"}),`
+`,(0,e.jsx)(n.li,{children:"User experience"}),`
+`,(0,e.jsx)(n.li,{children:"Team collaboration"}),`
+`]}),`
+`,(0,e.jsx)(n.p,{children:"Start small, iterate often, and document everything."})]})}function h(t={}){let{wrapper:n}=t.components||{};return n?(0,e.jsx)(n,{...t,children:(0,e.jsx)(d,{...t})}):d(t)}return v(k);})();
+;return Component;e:T48f,# Mastering Remote Work: Productivity Tips
+
+Remote work is less about “working from anywhere” and more about building routines that protect your focus and your energy. A few small defaults go a long way.
+
+> Remote work works best when your day has clear starts, clear stops, and fewer context switches.
+
+## Common challenges
+
+- Home distractions
+- Blurry work/life boundaries
+- Fewer casual social touchpoints
+- Async communication gaps
+
+## Daily routine checklist (example)
+
+| Habit | Why it helps
+|------|--------------
+| Dedicated workspace | Signals "work mode"
+| Plan top 3 tasks | Reduces overwhelm
+| Deep work block | Protects focus
+| Walk / stretch break | Prevents burnout
+| Shutdown ritual | Creates a clear end
+
+## Tools (keep it minimal)
+
+- [x] Pick one task tracker (e.g. Linear / GitHub Issues)
+- [ ] Pick one notes app (e.g. Notion / Obsidian)
+- [ ] Keep a single calendar (e.g. Google Calendar)
+- [ ] Turn on Focus / Do Not Disturb during deep work
+- [ ] Prefer async updates; use chat for blockers only
+
+## Wrap-up
+
+Start with one routine change (workspace + “top 3 tasks”) and one boundary (a daily shutdown time). Once those stick, iterate.f:Tf4f,var Component=(()=>{var u=Object.create;var l=Object.defineProperty;var k=Object.getOwnPropertyDescriptor;var p=Object.getOwnPropertyNames;var m=Object.getPrototypeOf,b=Object.prototype.hasOwnProperty;var y=(n,e)=>()=>(e||n((e={exports:{}}).exports,e),e.exports),w=(n,e)=>{for(var i in e)l(n,i,{get:e[i],enumerable:!0})},a=(n,e,i,c)=>{if(e&&typeof e=="object"||typeof e=="function")for(let r of p(e))!b.call(n,r)&&r!==i&&l(n,r,{get:()=>e[r],enumerable:!(c=k(e,r))||c.enumerable});return n};var g=(n,e,i)=>(i=n!=null?u(m(n)):{},a(e||!n||!n.__esModule?l(i,"default",{value:n,enumerable:!0}):i,n)),x=n=>a(l({},"__esModule",{value:!0}),n);var o=y((D,s)=>{s.exports=_jsx_runtime});var f={};w(f,{default:()=>h});var t=g(o());function d(n){let e={blockquote:"blockquote",h1:"h1",h2:"h2",input:"input",li:"li",p:"p",table:"table",tbody:"tbody",td:"td",th:"th",thead:"thead",tr:"tr",ul:"ul",...n.components};return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(e.h1,{children:"Mastering Remote Work: Productivity Tips"}),`
+`,(0,t.jsx)(e.p,{children:"Remote work is less about \u201Cworking from anywhere\u201D and more about building routines that protect your focus and your energy. A few small defaults go a long way."}),`
+`,(0,t.jsxs)(e.blockquote,{children:[`
+`,(0,t.jsx)(e.p,{children:"Remote work works best when your day has clear starts, clear stops, and fewer context switches."}),`
+`]}),`
+`,(0,t.jsx)(e.h2,{children:"Common challenges"}),`
+`,(0,t.jsxs)(e.ul,{children:[`
+`,(0,t.jsx)(e.li,{children:"Home distractions"}),`
+`,(0,t.jsx)(e.li,{children:"Blurry work/life boundaries"}),`
+`,(0,t.jsx)(e.li,{children:"Fewer casual social touchpoints"}),`
+`,(0,t.jsx)(e.li,{children:"Async communication gaps"}),`
+`]}),`
+`,(0,t.jsx)(e.h2,{children:"Daily routine checklist (example)"}),`
+`,(0,t.jsxs)(e.table,{children:[(0,t.jsx)(e.thead,{children:(0,t.jsxs)(e.tr,{children:[(0,t.jsx)(e.th,{children:"Habit"}),(0,t.jsx)(e.th,{children:"Why it helps"})]})}),(0,t.jsxs)(e.tbody,{children:[(0,t.jsxs)(e.tr,{children:[(0,t.jsx)(e.td,{children:"Dedicated workspace"}),(0,t.jsx)(e.td,{children:'Signals "work mode"'})]}),(0,t.jsxs)(e.tr,{children:[(0,t.jsx)(e.td,{children:"Plan top 3 tasks"}),(0,t.jsx)(e.td,{children:"Reduces overwhelm"})]}),(0,t.jsxs)(e.tr,{children:[(0,t.jsx)(e.td,{children:"Deep work block"}),(0,t.jsx)(e.td,{children:"Protects focus"})]}),(0,t.jsxs)(e.tr,{children:[(0,t.jsx)(e.td,{children:"Walk / stretch break"}),(0,t.jsx)(e.td,{children:"Prevents burnout"})]}),(0,t.jsxs)(e.tr,{children:[(0,t.jsx)(e.td,{children:"Shutdown ritual"}),(0,t.jsx)(e.td,{children:"Creates a clear end"})]})]})]}),`
+`,(0,t.jsx)(e.h2,{children:"Tools (keep it minimal)"}),`
+`,(0,t.jsxs)(e.ul,{className:"contains-task-list",children:[`
+`,(0,t.jsxs)(e.li,{className:"task-list-item",children:[(0,t.jsx)(e.input,{type:"checkbox",checked:!0,disabled:!0})," ","Pick one task tracker (e.g. Linear / GitHub Issues)"]}),`
+`,(0,t.jsxs)(e.li,{className:"task-list-item",children:[(0,t.jsx)(e.input,{type:"checkbox",disabled:!0})," ","Pick one notes app (e.g. Notion / Obsidian)"]}),`
+`,(0,t.jsxs)(e.li,{className:"task-list-item",children:[(0,t.jsx)(e.input,{type:"checkbox",disabled:!0})," ","Keep a single calendar (e.g. Google Calendar)"]}),`
+`,(0,t.jsxs)(e.li,{className:"task-list-item",children:[(0,t.jsx)(e.input,{type:"checkbox",disabled:!0})," ","Turn on Focus / Do Not Disturb during deep work"]}),`
+`,(0,t.jsxs)(e.li,{className:"task-list-item",children:[(0,t.jsx)(e.input,{type:"checkbox",disabled:!0})," ","Prefer async updates; use chat for blockers only"]}),`
+`]}),`
+`,(0,t.jsx)(e.h2,{children:"Wrap-up"}),`
+`,(0,t.jsx)(e.p,{children:"Start with one routine change (workspace + \u201Ctop 3 tasks\u201D) and one boundary (a daily shutdown time). Once those stick, iterate."})]})}function h(n={}){let{wrapper:e}=n.components||{};return e?(0,t.jsx)(e,{...n,children:(0,t.jsx)(d,{...n})}):d(n)}return x(f);})();
+;return Component;0:{"buildId":"offXRjBj92S0BP3BQvvnA","rsc":["$","$1","c",{"children":[["$","section",null,{"id":"blog","children":[["$","$L2",null,{"delay":0.04,"children":[["$","h1",null,{"className":"text-2xl font-semibold tracking-tight mb-2","children":["Blog ",["$","span",null,{"className":"ml-1 bg-card border border-border rounded-md px-2 py-1 text-muted-foreground text-sm","children":[7," posts"]}]]}],["$","p",null,{"className":"text-sm text-muted-foreground mb-8","children":"My thoughts on software development, life, and more."}]]}],["$","$L3",null,{"posts":[{"title":"Testing React Applications: A Practical Guide","publishedAt":"2024-12-14","updatedAt":"2024-12-14","author":"John Doe","summary":"From unit tests to E2E—learn how to build confidence in your React applications with comprehensive testing.","image":"https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&h=192&fit=crop","content":"$4","_meta":{"filePath":"testing-react-apps.mdx","fileName":"testing-react-apps.mdx","directory":".","extension":"mdx","path":"testing-react-apps"},"mdx":"$5"},{"title":"REST API Design Principles That Stand the Test of Time","publishedAt":"2024-12-12","updatedAt":"2024-12-12","author":"John Doe","summary":"Learn how to design APIs that developers love to use and are easy to maintain.","image":"https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=192&fit=crop","content":"$6","_meta":{"filePath":"api-design-principles.mdx","fileName":"api-design-principles.mdx","directory":".","extension":"mdx","path":"api-design-principles"},"mdx":"$7"},{"title":"Git Workflow Guide: From Chaos to Clarity","publishedAt":"2024-12-10","updatedAt":"2024-12-10","author":"John Doe","summary":"Master Git workflows that keep your team productive and your codebase healthy.","image":"https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=800&h=192&fit=crop","content":"# Git Workflow Guide: From Chaos to Clarity\n\nGit is powerful, but teams usually struggle because they don’t agree on a few basics. A simple workflow keeps history readable, reviews focused, and releases less stressful.\n\nThis is a lightweight guide you can adopt in a day and iterate on later.\n\n## A simple team workflow\n\n- Branch from `main` for every change.\n- Keep branches small and short-lived.\n- Open a pull request early and ask for review.\n- Merge back to `main` once tests pass.\n\n## Commit message tips\n\n- Start with a clear verb (“add”, “fix”, “remove”, “refactor”).\n- Keep the first line short and specific.\n- Prefer multiple small commits over one giant “WIP”.\n\n## PR checklist\n\n1. Explain what changed and why.\n2. Link the issue or describe the user impact.\n3. Add tests (or explain why not).\n4. Keep the diff small enough to review quickly.\n\n## Wrap-up\n\nThe goal isn’t “perfect Git” — it’s fewer surprises and faster collaboration. Start simple, write down the rules, and improve them as your team grows.","_meta":{"filePath":"git-workflow-guide.mdx","fileName":"git-workflow-guide.mdx","directory":".","extension":"mdx","path":"git-workflow-guide"},"mdx":"$8"},{"title":"TypeScript Best Practices for Clean, Maintainable Code","publishedAt":"2024-12-08","updatedAt":"2024-12-08","author":"John Doe","summary":"Essential TypeScript patterns and practices that will make your codebase more robust and easier to maintain.","image":"https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=192&fit=crop","content":"$9","_meta":{"filePath":"typescript-best-practices.mdx","fileName":"typescript-best-practices.mdx","directory":".","extension":"mdx","path":"typescript-best-practices"},"mdx":"$a"},{"title":"10 Next.js Performance Tips for Production Apps","publishedAt":"2024-12-05","updatedAt":"2024-12-05","author":"John Doe","summary":"Practical optimization techniques to make your Next.js applications blazing fast in production.","image":"https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=192&fit=crop","content":"Performance isn't optional—it's a feature. Here are battle-tested tips for optimizing Next.js apps.\n\n# 2. Optimize Images\n\nAlways use `next/image`\n\n```tsx\nimport Image from 'next/image';\n\nexport function Hero() {\n  return (\n    <Image\n      src=\"/hero.jpg\"\n      alt=\"Hero image\"\n      width={1200}\n      height={600}\n      priority // Load immediately for LCP\n      placeholder=\"blur\"\n      blurDataURL=\"data:image/jpeg;base64,...\"\n    />\n  );\n}\n```\n\n\n## 4. Implement Proper Caching\n\n| Strategy | Use Case | TTL |\n|----------|----------|-----|\n| `force-cache` | Static data | Forever |\n| `revalidate: 3600` | Semi-static | 1 hour |\n| `revalidate: 60` | Frequently updated | 1 minute |\n| `no-store` | Real-time data | Never cache |\n\n## 5. Minimize Client Components\n\nEvery `'use client'` directive adds to your JavaScript bundle. Keep client components small and focused:\n\n## 6. Bundle Analysis\n\n```bash title=\"terminal\"\n# Install analyzer\nnpm install @next/bundle-analyzer\n\n# Run analysis\nANALYZE=true npm run build\n```","_meta":{"filePath":"nextjs-performance-tips.mdx","fileName":"nextjs-performance-tips.mdx","directory":".","extension":"mdx","path":"nextjs-performance-tips"},"mdx":"$b"},{"title":"Building Scalable Design Systems with React and Tailwind","publishedAt":"2024-12-01","updatedAt":"2024-12-01","author":"John Doe","summary":"A comprehensive guide to creating maintainable design systems that scale with your team and product.","image":"https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&h=192&fit=crop","content":"$c","_meta":{"filePath":"building-design-systems.mdx","fileName":"building-design-systems.mdx","directory":".","extension":"mdx","path":"building-design-systems"},"mdx":"$d"},{"title":"Mastering Remote Work: Productivity Tips from a Digital Nomad","publishedAt":"2024-11-25","updatedAt":"2024-11-25","author":"John Doe","summary":"Practical strategies for staying productive, focused, and balanced while working remotely, based on years of experience.","image":"https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=192&fit=crop","content":"$e","_meta":{"filePath":"remote-work-productivity.mdx","fileName":"remote-work-productivity.mdx","directory":".","extension":"mdx","path":"remote-work-productivity"},"mdx":"$f"}]}]]}],["$L10"],"$L11"]}],"loading":null,"isPartial":false}
+10:["$","script","script-0",{"src":"/_next/static/chunks/59442ea7f9348b2b.js","async":true}]
+11:["$","$L12",null,{"children":["$","$13",null,{"name":"Next.MetadataOutlet","children":"$@14"}]}]
+14:null
