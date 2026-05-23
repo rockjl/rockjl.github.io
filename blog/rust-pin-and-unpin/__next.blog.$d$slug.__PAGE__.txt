@@ -1,0 +1,113 @@
+1:"$Sreact.fragment"
+2:I[72428,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],""]
+3:I[54216,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],"CodeBlock",1]
+10:I[26487,["/_next/static/chunks/77e7100737f17bb7.js","/_next/static/chunks/f91053d8cc2847b4.js"],"OutletBoundary"]
+11:"$Sreact.suspense"
+:HL["../images/93ad25c29b0be8d81ae0408465e34641.png","image"]
+:HL["../images/f0acc9f7f224dc83c1f390ed849a742e.png","image"]
+4:T4ae,#[derive(Debug)]
+struct SelfRef {
+    value: String,
+    ptr: *mut String,
+}
+
+impl SelfRef {
+    fn new(txt: &str) -> Self {
+        SelfRef {
+            value: String::from(txt),
+            ptr: std::ptr::null_mut(),
+        }
+    }
+    fn init(&mut self) {
+        let v_ref = &self.value;
+        self.ptr = v_ref as *const String as *mut String;
+    }
+    fn value(&self) -> &str {
+        &self.value
+    }
+    fn ptr(&self) -> &String {
+        unsafe { &*self.ptr }
+    }
+    fn ptr_address(&self) -> *mut String {
+        self.ptr
+    }
+}
+
+fn test0() {
+    let mut sr = SelfRef::new("111111");
+    sr.init();
+    let mut sr2 = SelfRef::new("222222");
+    sr2.init();
+    println!("sr : {:?} value: {:?} ptr: {:?} ptr_address: {:p}", sr, sr.value(), sr.ptr(), sr.ptr_address());
+    println!("sr2: {:?} value: {:?} ptr: {:?} ptr_address: {:p}", sr2, sr2.value(), sr2.ptr(), sr2.ptr_address());
+    std::mem::swap(&mut sr, &mut sr2);
+    println!("after swap");
+    println!("sr : {:?} value: {:?} ptr: {:?} ptr_address: {:p}", sr, sr.value(), sr.ptr(), sr.ptr_address());
+    println!("sr2: {:?} value: {:?} ptr: {:?} ptr_address: {:p}", sr2, sr2.value(), sr2.ptr(), sr2.ptr_address());
+}
+0:{"buildId":"ephH8wRFzzwpIEjAQmXME","rsc":["$","$1","c",{"children":[["$","section",null,{"id":"blog","children":[["$","script",null,{"type":"application/ld+json","suppressHydrationWarning":true,"dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"rust pin&unpin\",\"datePublished\":\"2023-06-29\",\"dateModified\":\"2023-06-29\",\"description\":\"想要理解pin与unpin主要要理解数据再移动的时候的不安全。就知道了pin的重要性。 struct SelfRef { value: String, ptr: *mut String, }\",\"image\":\"https://rockjl.github.io/blog/rust-pin-and-unpin/opengraph-image\",\"url\":\"https://rockjl.github.io/blog/rust-pin-and-unpin\",\"author\":{\"@type\":\"Person\",\"name\":\"Jiang Liang\"}}"}}],["$","div",null,{"className":"flex justify-start gap-4 items-center","children":["$","$L2",null,{"href":"/blog","className":"text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2 py-1 inline-flex items-center gap-1 mb-6 group","aria-label":"Back to Blog","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3 group-hover:-translate-x-px transition-transform","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Back to Blog"]}]}],["$","div",null,{"className":"flex flex-col gap-4","children":[["$","h1",null,{"className":"title font-semibold text-3xl md:text-4xl tracking-tighter leading-tight","children":"rust pin&unpin"}],["$","p",null,{"className":"text-sm text-muted-foreground","children":"June 29, 2023"}]]}],["$","div",null,{"className":"my-6 flex w-full items-center","children":["$","div",null,{"className":"flex-1 h-px bg-border","style":{"maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)","WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}}]}],["$","article",null,{"className":"prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert","children":[["$","p",null,{"children":"想要理解pin与unpin主要要理解数据再移动的时候的不安全。就知道了pin的重要性。"}],"\n",["$","h1",null,{"children":"先看非安全的数据移动"}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$4"}]}],"\n",["$","p",null,{"children":"如上代码我会得到以下输出。"}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-bash","children":"sr : SelfRef { value: \"111111\", ptr: 0x7ff7bfefe2b0 } value: \"111111\" ptr: \"111111\" ptr_address: 0x7ff7bfefe2b0\nsr2: SelfRef { value: \"222222\", ptr: 0x7ff7bfefe2d0 } value: \"222222\" ptr: \"222222\" ptr_address: 0x7ff7bfefe2d0\nafter swap\nsr : SelfRef { value: \"222222\", ptr: 0x7ff7bfefe2d0 } value: \"222222\" ptr: \"111111\" ptr_address: 0x7ff7bfefe2d0\nsr2: SelfRef { value: \"111111\", ptr: 0x7ff7bfefe2b0 } value: \"111111\" ptr: \"222222\" ptr_address: 0x7ff7bfefe2b0\n"}]}],"\n","$L5","\n","$L6","\n","$L7","\n","$L8","\n","$L9"]}],"$La"]}],["$Lb","$Lc","$Ld"],"$Le"]}],"loading":null,"isPartial":false}
+5:["$","p",null,{"children":["当打印对象本身的时候，value与ptr两个变量的值的确得到了交换。没有任何问题。但是当我对ptr进行解引用的时候就出现了问题了，因为他还是指向了",["$","strong",null,{"children":"内存中"}],"旧的地址，而这个内存地址说的是前一个变量的内存地址。注意这里是",["$","strong",null,{"children":"内存中"}],"。ptr并不指向value。ptr与value都是变量，变量也是存储在内存中的，只是他们的内容存储的是指向其他内存地址的值，变量本身也有自己的内存地址。我来修改以下代码，让打印内容变得更清晰。"]}]
+f:T7a7,#[derive(Debug)]
+struct SelfRef {
+    value: String,
+    ptr: *mut String,
+}
+
+impl SelfRef {
+    fn new(txt: &str) -> Self {
+        SelfRef {
+            value: String::from(txt),
+            ptr: std::ptr::null_mut(),
+        }
+    }
+    fn init(&mut self) {
+        let v_ref = &self.value;
+        self.ptr = v_ref as *const String as *mut String;
+    }
+    fn value(&self) -> &str {
+        &self.value
+    }
+    fn value_address(&self) -> *mut String {
+        &self.value as *const String as *mut String
+    }
+    fn value_address2(&self) -> *const u8 {
+        self.value.as_ptr()
+    }
+    fn ptr(&self) -> &String {
+        unsafe { &*self.ptr }
+    }
+    fn ptr_self_address(&self) -> &*mut String {
+        &self.ptr as &*mut String
+    }
+    fn ptr_address(&self) -> *mut String {
+        self.ptr
+    }
+}
+
+fn test0() {
+    let a: i32 = 33;
+    println!("a_stack_address: {:p}", &a);
+    let a = Box::new(a);
+    println!("a_heap_address : {:p}", a.as_ref());
+    let mut sr = SelfRef::new("111111");
+    sr.init();
+    let mut sr2 = SelfRef::new("222222");
+    sr2.init();
+    println!("sr : {:?} v: {:?} v: {:p} p: {:?} p_a: {:p} p_s_a: {:p} String_a: {:p}", sr, sr.value(), sr.value_address(), sr.ptr(), sr.ptr_address(), sr.ptr_self_address(), sr.value_address2());
+    println!("sr2: {:?} v: {:?} v: {:p} p: {:?} p_a: {:p} p_s_a: {:p} String_a: {:p}", sr2, sr2.value(), sr2.value_address(), sr2.ptr(), sr2.ptr_address(), sr2.ptr_self_address(), sr2.value_address2());
+    std::mem::swap(&mut sr, &mut sr2);
+    println!("after swap");
+    println!("sr : {:?} v: {:?} v: {:p} p: {:?} p_a: {:p} p_s_a: {:p} String_a: {:p}", sr, sr.value(), sr.value_address(), sr.ptr(), sr.ptr_address(), sr.ptr_self_address(), sr.value_address2());
+    println!("sr2: {:?} v: {:?} v: {:p} p: {:?} p_a: {:p} p_s_a: {:p} String_a: {:p}", sr2, sr2.value(), sr2.value_address(), sr2.ptr(), sr2.ptr_address(), sr2.ptr_self_address(), sr2.value_address2());
+    
+}
+6:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$f"}]}]
+7:["$","p",null,{"children":"然后输出变成了如下的内容："}]
+8:["$","$L3",null,{"children":["$","code",null,{"className":"language-bash","children":"a_stack_address: 0x7ff7bfefdef4\na_heap_address : 0x1002040d0\nsr : SelfRef { value: \"111111\", ptr: 0x7ff7bfefdf90 } v: \"111111\" v: 0x7ff7bfefdf90 p: \"111111\" p_a: 0x7ff7bfefdf90 p_s_a: 0x7ff7bfefdfa8 String_a: 0x100204160\nsr2: SelfRef { value: \"222222\", ptr: 0x7ff7bfefdfb0 } v: \"222222\" v: 0x7ff7bfefdfb0 p: \"222222\" p_a: 0x7ff7bfefdfb0 p_s_a: 0x7ff7bfefdfc8 String_a: 0x100204170\nafter swap\nsr : SelfRef { value: \"222222\", ptr: 0x7ff7bfefdfb0 } v: \"222222\" v: 0x7ff7bfefdf90 p: \"111111\" p_a: 0x7ff7bfefdfb0 p_s_a: 0x7ff7bfefdfa8 String_a: 0x100204170\nsr2: SelfRef { value: \"111111\", ptr: 0x7ff7bfefdf90 } v: \"111111\" v: 0x7ff7bfefdfb0 p: \"222222\" p_a: 0x7ff7bfefdf90 p_s_a: 0x7ff7bfefdfc8 String_a: 0x100204160\n"}]}]
+9:["$","p",null,{"children":["由于打印的内容有点多，我用了简写。可以看到0x1开头的是heap的地址，0x7开头的是stack的地址。那么ptr指向的其实只是value在栈中的地址。而不是value的值在heap中String的地址。更可以看到其实变量本身的地址并没有改变，而改变的只是变量内存储的内容。\n现在我再还一张图，让这个结果显得更加的立体。\n先看交换之前的：\n",["$","img",null,{"src":"../images/93ad25c29b0be8d81ae0408465e34641.png","alt":"在这里插入图片描述"}],"\n再来看交换之后的：\n",["$","img",null,{"src":"../images/f0acc9f7f224dc83c1f390ed849a742e.png","alt":"在这里插入图片描述"}],"\n其实交换了半天，交换的只是变量内存储的内容。变量本身的内存地址没有任何改变，heap中的内存地址以及内存地址中的值也没有改变。"]}]
+a:["$","nav",null,{"className":"mt-12 pt-8 max-w-2xl","children":["$","div",null,{"className":"flex flex-col sm:flex-row justify-between gap-4","children":[["$","$L2",null,{"href":"/blog/rust-memory-alloc-dealloc-leak","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors","children":[["$","span",null,{"className":"flex items-center gap-1 text-xs text-muted-foreground","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Previous"]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust memory allocation/deallocation/leak"}]]}],["$","$L2",null,{"href":"/blog/rust-reborrow","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors text-right","children":[["$","span",null,{"className":"flex items-center justify-end gap-1 text-xs text-muted-foreground","children":["Next",["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-right size-3","aria-hidden":"true","children":[["$","path","mthhwq",{"d":"m9 18 6-6-6-6"}],"$undefined"]}]]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust reborrow"}]]}]]}]}]
+b:["$","script","script-0",{"src":"/_next/static/chunks/49805b192645e9aa.js","async":true}]
+c:["$","script","script-1",{"src":"/_next/static/chunks/097ca8f017d5f200.js","async":true}]
+d:["$","script","script-2",{"src":"/_next/static/chunks/e95840a5bb009f36.js","async":true}]
+e:["$","$L10",null,{"children":["$","$11",null,{"name":"Next.MetadataOutlet","children":"$@12"}]}]
+12:null

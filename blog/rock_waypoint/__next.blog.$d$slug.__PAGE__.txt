@@ -1,0 +1,116 @@
+1:"$Sreact.fragment"
+2:I[72428,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],""]
+3:I[54216,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],"CodeBlock",1]
+1c:I[26487,["/_next/static/chunks/77e7100737f17bb7.js","/_next/static/chunks/f91053d8cc2847b4.js"],"OutletBoundary"]
+1d:"$Sreact.suspense"
+:HL["../images/v2-8f9db8164b2a0c849412d8b92c8fe35b_720w.png","image"]
+:HL["../images/v2-b99044de7dfe31ca7734d61de2135d23_720w.png","image"]
+:HL["../images/v2-51433b7d039162ad01fce398a869bfb7_720w.png","image"]
+0:{"buildId":"ephH8wRFzzwpIEjAQmXME","rsc":["$","$1","c",{"children":[["$","section",null,{"id":"blog","children":[["$","script",null,{"type":"application/ld+json","suppressHydrationWarning":true,"dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"High-Performance Gateway\",\"datePublished\":\"2024-06-02\",\"dateModified\":\"2024-06-02\",\"description\":\"无意中在github上发现了一款rust语言编写的网关，通过简单的性能测试发现rwp的性能比nginx的要好很多。于是就有了接下来的大规模性能测试对比。\",\"image\":\"https://rockjl.github.io/blog/rock_waypoint/opengraph-image\",\"url\":\"https://rockjl.github.io/blog/rock_waypoint\",\"author\":{\"@type\":\"Person\",\"name\":\"Jiang Liang\"}}"}}],["$","div",null,{"className":"flex justify-start gap-4 items-center","children":["$","$L2",null,{"href":"/blog","className":"text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2 py-1 inline-flex items-center gap-1 mb-6 group","aria-label":"Back to Blog","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3 group-hover:-translate-x-px transition-transform","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Back to Blog"]}]}],["$","div",null,{"className":"flex flex-col gap-4","children":[["$","h1",null,{"className":"title font-semibold text-3xl md:text-4xl tracking-tighter leading-tight","children":"High-Performance Gateway"}],["$","p",null,{"className":"text-sm text-muted-foreground","children":"June 2, 2024"}]]}],["$","div",null,{"className":"my-6 flex w-full items-center","children":["$","div",null,{"className":"flex-1 h-px bg-border","style":{"maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)","WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}}]}],["$","article",null,{"className":"prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert","children":[["$","p",null,{"children":"无意中在github上发现了一款rust语言编写的网关，通过简单的性能测试发现rwp的性能比nginx的要好很多。于是就有了接下来的大规模性能测试对比。"}],"\n",["$","p",null,{"children":["RWP:",["$","a",null,{"href":"https://github.com/rockjl/rwp","children":"https://github.com/rockjl/rwp"}]]}],"\n",["$","h3",null,{"children":"测试环境"}],"\n",["$","p",null,{"children":"在阿里申请了12台ecs服务器来做测试。"}],"\n",["$","p",null,{"children":["$","img",null,{"src":"../images/v2-8f9db8164b2a0c849412d8b92c8fe35b_720w.png","alt":"img"}]}],"\n",["$","p",null,{"children":"这是大概的测试环境。 - ab命令主机，为了能够并发更多的线程，达到更好的效果。所以选用了一台32cpu,64mem的服务器。 - 运行nginx/rwp的主机，为了能够更好的发挥网关性能选用了一台16cpu,32mem的服务器。 - 运行简单web程序的host_point就简单了一些，选用了一台2cpu,4mem的设备。"}],"\n",["$","h3",null,{"children":"单台web程序由rust编写，单台web程序的qps也差不多可以达到9000QPS上下。只是简单返回一个hello world。使用最基础的hyper作为web框架基础，使用tokio作为异步核心框架。"}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"static INDEXSTR: &[u8] = b\"hello world\";\nasync fn index(_in: http::Request<hyper::body::Incoming>) -> Result<Response<http_body_util::Full<Bytes>>, hyper::Error> {\n    Ok(Response::new(http_body_util::Full::new(Bytes::from(INDEXSTR))))\n}\nfn main() {\n    let mut rt = tokio::runtime::Builder::new_multi_thread()\n        .enable_all()\n        .build()\n        .unwrap();\n    rt.block_on(async {\n        let addr: std::net::SocketAddr = ([0, 0, 0, 0], 8080).into();\n        let listener = tokio::net::TcpListener::bind(addr).await.unwrap();\n        loop {\n            let (stream, _) = listener.accept().await.unwrap();\n            let io = hyper_util::rt::TokioIo::new(stream);\n\n            tokio::task::spawn(async move {\n                if let Err(err) = hyper::server::conn::http1::Builder::new()\n                    .serve_connection(io, hyper::service::service_fn(index)).await\n                {\n                    println!(\"Error serving connection: {:?}\", err);\n                }\n            });\n        }\n    }); \n}\n"}]}],"\n","$L4","\n","$L5","\n","$L6","\n","$L7","\n","$L8","\n","$L9","\n","$La","\n","$Lb","\n","$Lc","\n","$Ld","\n","$Le","\n","$Lf","\n","$L10","\n","$L11","\n","$L12","\n","$L13","\n","$L14"]}],"$L15"]}],["$L16","$L17","$L18"],"$L19"]}],"loading":null,"isPartial":false}
+4:["$","h3",null,{"children":"测试流程"}]
+5:["$","ol",null,{"children":["\n",["$","li",null,{"children":"gateway服务器以轮训的方式，轮训到这10台服务器。"}],"\n",["$","li",null,{"children":["测试服务器使用ab命令：",["$","code",null,{"className":"px-1.5 py-0.5 rounded-md bg-muted/60 dark:bg-muted/40 text-sm font-mono text-foreground/90","children":"ab -n xxx -c xxx http://172.17.10.102:8080/"}],"用作测试命令。"]}],"\n",["$","li",null,{"children":"为了保证测试的准确性，每条测试数据分三次执行，然后选取中间的数据(注意这里不是平均数据)。"}],"\n",["$","li",null,{"children":"为了保证测试的准确性，每条ab测试命令的执行间隔至少1分钟。"}],"\n",["$","li",null,{"children":"nginx开启cpu绑定，且其他配置使用最简单的配置。"}],"\n",["$","li",null,{"children":"rwp也开启cpu绑定，且其他配置使用最简单的配置。(rwp使用tokio作为核心异步框架，tokio分为核心线程和阻塞线程。核心线程就是操作系统线程，线程数量默认为cpu核心数。rwp的cpu绑定，绑定的就是tokio的核心线程与cpu的执行关系。)"}],"\n",["$","li",null,{"children":"优先使用ab命令服务器直接链接单台web服务器做单台性能测试。"}],"\n",["$","li",null,{"children":"最终在开始整体的系统测试。"}],"\n"]}]
+6:["$","h3",null,{"children":"nginx配置"}]
+1a:T442,user www-data;
+worker_processes 16;
+worker_cpu_affinity 0000000000000001 0000000000000010 0000000000000100 0000000000001000 0000000000010000 0000000000100000 0000000001000000 0000000010000000 0000000100000000 0000001000000000 0000010000000000 0000100000000000 0001000000000000 0010000000000000 0100000000000000 1000000000000000;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
+events {
+	worker_connections 102400;
+}
+http {
+	sendfile on;
+	tcp_nopush on;
+	#types_hash_max_size 2048;
+	keepalive_timeout 65;
+
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+
+	access_log /var/log/nginx/access.log;
+	error_log /var/log/nginx/error.log;
+
+	include /etc/nginx/conf.d/*.conf;
+	include /etc/nginx/sites-enabled/*;
+
+	upstream test_servers {
+		172.17.4.100:8080;
+		172.17.4.103:8080;
+		172.17.4.102:8080;
+		172.17.4.105:8080;
+		172.17.4.99:8080;
+		172.17.4.104:8080;
+		172.17.4.97:8080;
+		172.17.4.106:8080;
+		172.17.4.98:8080;
+		172.17.4.101:8080;
+	}
+	
+	server {
+		listen 8180;
+		server_name localhost;
+		location / {
+			proxy_pass http://test_servers;
+		}
+	}	
+}
+7:["$","$L3",null,{"children":["$","code",null,{"className":"px-1.5 py-0.5 rounded-md bg-muted/60 dark:bg-muted/40 text-sm font-mono text-foreground/90","children":"$1a"}]}]
+8:["$","h3",null,{"children":"rwp配置"}]
+1b:T55e,service:
+  disable_upgrade_insecure_requests: true
+  interfaces:
+    http:
+      - address: "0.0.0.0:8180"
+  multi_thread:                     
+    nevents: 102400                   
+    bind_cpu: all
+
+hosts:
+  httpbin:
+    type: round_robin
+    servers:
+      - 172.17.4.100:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.103:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.102:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.105:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.99:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.104:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.97:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.106:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.98:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+      - 172.17.4.101:8080 timeout=20s max_fails_durn=5min max_fails=10 fail_timeout=9s
+
+pipes:              
+  http_pipe:
+    - dispatche: rwp
+    - return: rwp
+
+routes:
+  http_test:
+    protocol: http
+    in:
+      type: regex
+      pattern: "^/w*"
+    out:
+      type: network
+      path: "/"
+      out_host: httpbin
+    pipe: http_pipe
+9:["$","$L3",null,{"children":["$","code",null,{"className":"px-1.5 py-0.5 rounded-md bg-muted/60 dark:bg-muted/40 text-sm font-mono text-foreground/90","children":"$1b"}]}]
+a:["$","h3",null,{"children":"最终测试结果"}]
+b:["$","p",null,{"children":["$","img",null,{"src":"../images/v2-b99044de7dfe31ca7734d61de2135d23_720w.png","alt":"img"}]}]
+c:["$","p",null,{"children":"添加图片注释，不超过 140 字（可选）"}]
+d:["$","div",null,{"className":"my-6 border border-border rounded-xl overflow-hidden","children":["$","div",null,{"className":"w-full overflow-x-auto","children":["$","table",null,{"className":"m-0! w-full min-w-full border-separate border-spacing-0","children":[["$","thead",null,{"children":["$","tr",null,{"children":[["$","th",null,{"children":"n"}],["$","th",null,{"children":"c"}],["$","th",null,{"children":"nginx/qps"}],["$","th",null,{"children":"rwp/qps"}],["$","th",null,{"children":"single/qps"}]]}]}],["$","tbody",null,{"children":[["$","tr",null,{"children":[["$","td",null,{"children":"100"}],["$","td",null,{"children":"100"}],["$","td",null,{"children":"13812.08"}],["$","td",null,{"children":"13525.25"}],["$","td",null,{"children":"8776.05"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"1000"}],["$","td",null,{"children":"100"}],["$","td",null,{"children":"28707.58"}],["$","td",null,{"children":"29946.41"}],["$","td",null,{"children":"10012.53"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"10000"}],["$","td",null,{"children":"100"}],["$","td",null,{"children":"33079.11"}],["$","td",null,{"children":"33218.66"}],["$","td",null,{"children":"10086.11"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"20000"}],["$","td",null,{"children":"100"}],["$","td",null,{"children":"33667.33"}],["$","td",null,{"children":"33542.36"}],["$","td",null,{"children":"10105.03"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"500"}],["$","td",null,{"children":"500"}],["$","td",null,{"children":"19654.39"}],["$","td",null,{"children":"19375.34"}],["$","td",null,{"children":"10074.21"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"5000"}],["$","td",null,{"children":"500"}],["$","td",null,{"children":"31540.56"}],["$","td",null,{"children":"32451.31"}],["$","td",null,{"children":"9177.06"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"10000"}],["$","td",null,{"children":"500"}],["$","td",null,{"children":"33233.23"}],["$","td",null,{"children":"32898.34"}],["$","td",null,{"children":"9104.53"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"20000"}],["$","td",null,{"children":"500"}],["$","td",null,{"children":"33643.71"}],["$","td",null,{"children":"33728.75"}],["$","td",null,{"children":"9033.44"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"1000"}],["$","td",null,{"children":"1000"}],["$","td",null,{"children":"21435.77"}],["$","td",null,{"children":"20002.81"}],["$","td",null,{"children":"10237.01"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"10000"}],["$","td",null,{"children":"1000"}],["$","td",null,{"children":"31824.03"}],["$","td",null,{"children":"31918.66"}],["$","td",null,{"children":"8855.47"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"20000"}],["$","td",null,{"children":"1000"}],["$","td",null,{"children":"31350.27"}],["$","td",null,{"children":"32552.31"}],["$","td",null,{"children":"8866.32"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"2000"}],["$","td",null,{"children":"2000"}],["$","td",null,{"children":"20258.71"}],["$","td",null,{"children":"20995.84"}],["$","td",null,{"children":"9830.48"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"10000"}],["$","td",null,{"children":"2000"}],["$","td",null,{"children":"29281.39"}],["$","td",null,{"children":"29109.28"}],["$","td",null,{"children":"9074.36"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"20000"}],["$","td",null,{"children":"2000"}],["$","td",null,{"children":"29630.81"}],["$","td",null,{"children":"29492.26"}],["$","td",null,{"children":"8879.91"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"5000"}],["$","td",null,{"children":"5000"}],["$","td",null,{"children":"21702.42"}],["$","td",null,{"children":"21413.73"}],["$","td",null,{"children":"9508.69"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"10000"}],["$","td",null,{"children":"5000"}],["$","td",null,{"children":"24223.57"}],["$","td",null,{"children":"26052.73"}],["$","td",null,{"children":"9094.71"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"20000"}],["$","td",null,{"children":"5000"}],["$","td",null,{"children":"26831.66"}],["$","td",null,{"children":"27472.96"}],["$","td",null,{"children":"8936.61"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"10000"}],["$","td",null,{"children":"10000"}],["$","td",null,{"children":"21284.25"}],["$","td",null,{"children":"21559.48"}],["$","td",null,{"children":"9185.88"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"20000"}],["$","td",null,{"children":"10000"}],["$","td",null,{"children":"22198.62"}],["$","td",null,{"children":"25438.36"}],["$","td",null,{"children":"9036.88"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"30000"}],["$","td",null,{"children":"10000"}],["$","td",null,{"children":"23897.16"}],["$","td",null,{"children":"25117.28"}],["$","td",null,{"children":"9017.56"}]]}]]}]]}]}]}]
+e:["$","p",null,{"children":"从测试数据来看，并发量越高，反而rwp的性能会略高于nginx。"}]
+f:["$","h3",null,{"children":"我还有另一套测试数据，是根据不同的测试流程测试出来的数据"}]
+10:["$","p",null,{"children":["$","strong",null,{"children":"注意：我不知道哪一种测试流程更加的准确，但个人认为，服务器在生产环境承载并发峰值的数据应该是瞬时的，正常在服务器没有被攻击的情况下不会持续太久。所以个人认为上边的测试流程更加准确。由于rwp核心异步框架使用的是tokio，我们使用的是tokio的多线程模式，tokio的多线程模式需要预热，所以rwp刚启动以后的第一次执行数据qps会偏低算是正常现象。"}]}]
+11:["$","p",null,{"children":"测试流程："}]
+12:["$","ol",null,{"children":["\n",["$","li",null,{"children":"gateway服务器以轮训的方式，轮训到这10台服务器。"}],"\n",["$","li",null,{"children":["测试服务器使用ab命令：",["$","code",null,{"className":"px-1.5 py-0.5 rounded-md bg-muted/60 dark:bg-muted/40 text-sm font-mono text-foreground/90","children":"ab -n xxx -c xxx http://172.17.10.102:8080/"}],"用作测试命令。"]}],"\n",["$","li",null,{"children":"为了保证测试的准确性，每条测试数据分10次，每次命令之间执行无时间间隔。数据取10次的平均值。"}],"\n",["$","li",null,{"children":"nginx开启cpu绑定，且其他配置使用最简单的配置。"}],"\n",["$","li",null,{"children":"rwp也开启cpu绑定，且其他配置使用最简单的配置。(rwp使用tokio作为核心异步框架，tokio分为核心线程和阻塞线程。核心线程就是操作系统线程，线程数量默认为cpu核心数。rwp的cpu绑定，绑定的就是tokio的核心线程与cpu的执行关系。)"}],"\n",["$","li",null,{"children":"优先使用ab命令服务器直接链接单台web服务器做单台性能测试。"}],"\n",["$","li",null,{"children":"最终在开始整体的系统测试。"}],"\n"]}]
+13:["$","p",null,{"children":["$","img",null,{"src":"../images/v2-51433b7d039162ad01fce398a869bfb7_720w.png","alt":"img"}]}]
+14:["$","p",null,{"children":"添加图片注释，不超过 140 字（可选）"}]
+15:["$","nav",null,{"className":"mt-12 pt-8 max-w-2xl","children":["$","div",null,{"className":"flex flex-col sm:flex-row justify-between gap-4","children":[["$","$L2",null,{"href":"/blog/remote-work-productivity","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors","children":[["$","span",null,{"className":"flex items-center gap-1 text-xs text-muted-foreground","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Previous"]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"Mastering Remote Work: Productivity Tips from a Digital Nomad"}]]}],["$","$L2",null,{"href":"/blog/rust-macro-5","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors text-right","children":[["$","span",null,{"className":"flex items-center justify-end gap-1 text-xs text-muted-foreground","children":["Next",["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-right size-3","aria-hidden":"true","children":[["$","path","mthhwq",{"d":"m9 18 6-6-6-6"}],"$undefined"]}]]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust macro proc-macro-workshop solve problems 3"}]]}]]}]}]
+16:["$","script","script-0",{"src":"/_next/static/chunks/49805b192645e9aa.js","async":true}]
+17:["$","script","script-1",{"src":"/_next/static/chunks/097ca8f017d5f200.js","async":true}]
+18:["$","script","script-2",{"src":"/_next/static/chunks/e95840a5bb009f36.js","async":true}]
+19:["$","$L1c",null,{"children":["$","$1d",null,{"name":"Next.MetadataOutlet","children":"$@1e"}]}]
+1e:null

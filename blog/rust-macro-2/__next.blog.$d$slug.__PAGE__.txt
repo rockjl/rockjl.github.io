@@ -1,0 +1,445 @@
+1:"$Sreact.fragment"
+2:I[72428,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],""]
+3:I[54216,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],"CodeBlock",1]
+b:I[26487,["/_next/static/chunks/77e7100737f17bb7.js","/_next/static/chunks/f91053d8cc2847b4.js"],"OutletBoundary"]
+c:"$Sreact.suspense"
+0:{"buildId":"ephH8wRFzzwpIEjAQmXME","rsc":["$","$1","c",{"children":[["$","section",null,{"id":"blog","children":[["$","script",null,{"type":"application/ld+json","suppressHydrationWarning":true,"dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"rust macro proc-macro-workshop solve problems 1.1\",\"datePublished\":\"2023-09-21\",\"dateModified\":\"2023-09-21\",\"description\":\"| 名字 | 版本号       | | ---- | ------------ | | rust | 1.69.0       | | OS   | ubuntu 22.04 |\",\"image\":\"https://rockjl.github.io/blog/rust-macro-2/opengraph-image\",\"url\":\"https://rockjl.github.io/blog/rust-macro-2\",\"author\":{\"@type\":\"Person\",\"name\":\"Jiang Liang\"}}"}}],["$","div",null,{"className":"flex justify-start gap-4 items-center","children":["$","$L2",null,{"href":"/blog","className":"text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2 py-1 inline-flex items-center gap-1 mb-6 group","aria-label":"Back to Blog","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3 group-hover:-translate-x-px transition-transform","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Back to Blog"]}]}],["$","div",null,{"className":"flex flex-col gap-4","children":[["$","h1",null,{"className":"title font-semibold text-3xl md:text-4xl tracking-tighter leading-tight","children":"rust macro proc-macro-workshop solve problems 1.1"}],["$","p",null,{"className":"text-sm text-muted-foreground","children":"September 21, 2023"}]]}],["$","div",null,{"className":"my-6 flex w-full items-center","children":["$","div",null,{"className":"flex-1 h-px bg-border","style":{"maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)","WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}}]}],["$","article",null,{"className":"prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert","children":[["$","div",null,{"className":"my-6 border border-border rounded-xl overflow-hidden","children":["$","div",null,{"className":"w-full overflow-x-auto","children":["$","table",null,{"className":"m-0! w-full min-w-full border-separate border-spacing-0","children":[["$","thead",null,{"children":["$","tr",null,{"children":[["$","th",null,{"children":"名字"}],["$","th",null,{"children":"版本号"}]]}]}],["$","tbody",null,{"children":[["$","tr",null,{"children":[["$","td",null,{"children":"rust"}],["$","td",null,{"children":"1.69.0"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"OS"}],["$","td",null,{"children":"ubuntu 22.04"}]]}]]}]]}]}]}],"\n",["$","p",null,{"children":"本题目不是proc-macro-workshop提供的builder/9道题中的其中任何一道题。本题是我在网上搜索派生宏的时候，无意中查询到的，没有看到派生宏代码，就粘贴下来当作是一道题，自己实现了。\n题目代码是："}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"use derive_builder::BeanCheck;\nuse regex::{Regex, Captures};\n\n#[derive(BeanCheck)]\nstruct UserDO {\n    #[Min(30)]\n    pub min_age: u32,\n    #[Max(20)]\n    #[Range(1, 100)]\n    pub age: u16,\n    #[Length(1, 13)]\n    pub username: String,\n    #[Pattern(r\"^\\d{1,5}$\")]\n    pub password: String,\n    #[Email]\n    pub email: String,\n    pub mobile: String,\n}\n\nfn main() {\n    let u = UserDO {\n        min_age: 325,\n        age: 20,\n        username: \"gorey\".to_string(),\n        password: \"12345\".to_string(),\n        email: \"aa@qq.com\".to_string(),\n        mobile: \"13812341234\".to_string()\n    };\n\n    match u.validate() {\n        Ok(_) => { println!(\"check pass \"); },\n        Err(e) => { println!(\"{}\", e); },\n    }\n}\n"}]}],"\n",["$","p",null,{"children":"这道题实际上就是为了一个struct结构体成员变量格式自动生成一个校验函数。通过惰性属性，分别为每一个成员变量生成对应不同的校验过程罢了。\n直接上代码：\nlib.rs"}],"\n","$L4"]}],"$L5"]}],["$L6","$L7","$L8"],"$L9"]}],"loading":null,"isPartial":false}
+a:T4a4d,use proc_macro::TokenStream;
+use syn::{self, spanned::Spanned};
+use quote::{self, ToTokens};
+use regex::{Regex, Captures};
+
+type StructField = syn::punctuated::Punctuated<syn::Field, syn::Token![,]>;
+fn get_fields_from_derive_input(st: &syn::DeriveInput) -> syn::Result<&StructField> { //通过DeriveInput类型获得结构体内部的成员变量列表
+    //这里使用了三种不同的实现方式
+    if let syn::Data::Struct(syn::DataStruct{
+        fields:syn::Fields::Named(syn::FieldsNamed{
+            ref named, ..
+        }), ..
+    }) = st.data {
+        return Ok(named)
+    }
+    //.........................................................
+    // match st.data {
+    //     syn::Data::Struct(syn::DataStruct{
+    //         fields:syn::Fields::Named(syn::FieldsNamed{
+    //             ref named, 
+    //             ref brace_token
+    //         }), ..
+    //     }) => {
+    //         return Ok(named);
+    //     },
+    //     _ => {},
+    // }
+    //.........................................................
+    // match &st.data {
+    //     syn::Data::Struct(ds) => {
+    //         match &ds.fields {
+    //             syn::Fields::Named(fieldName) => {
+    //                 return Ok(&fieldName.named);
+    //             },
+    //             _ => {}
+    //         }
+    //     },
+    //     _ => {},
+    // }
+    Err(syn::Error::new_spanned(st, "Must Define On Struct, Not On Enum".to_string()))
+}
+fn check_and_take_user_specified_from_ident(field: &syn::Field, attr_str: &str) -> syn::Result<Option<syn::Ident>> {
+    for attr in &field.attrs {
+        if let Ok(syn::Meta::List(syn::MetaList {
+            ref path,
+            ref nested,
+            ..
+        })) = attr.parse_meta() {
+            if let Some(p) = path.segments.first() {
+                if p.ident == attr_str {
+                    match attr_str {
+                        "Min" => {
+                            if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                                syn::LitInt{..}
+                            ))) = nested.first() {
+                                return Ok(Some(syn::Ident::new(
+                                    p.ident.to_string().as_str(),
+                                    attr.span(),
+                                )));
+                            } else {
+                                if let Some(syn::NestedMeta::Lit(ref o)) = nested.first() {
+                                    return Err(syn::Error::new_spanned( 
+                                        o,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+                                        r#"Min Error"#                   //第二个参数，决定了报错的错误信息内容
+                                    ));
+                                }
+                            }
+                        },
+                        "Max" => {
+                            if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                                syn::LitInt{..}
+                            ))) = nested.first() {
+                                return Ok(Some(syn::Ident::new(
+                                    p.ident.to_string().as_str(),
+                                    attr.span(),
+                                )));
+                            } else {
+                                if let Some(syn::NestedMeta::Lit(ref o)) = nested.first() {
+                                    return Err(syn::Error::new_spanned( 
+                                        o,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+                                        r#"Max Error"#                   //第二个参数，决定了报错的错误信息内容
+                                    ));
+                                }
+                            }
+                        },
+                        "Range" => {
+                            let mut b = false;
+                            if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                                syn::LitInt{..}
+                            ))) = nested.first() {
+                                b = true;
+                            } else {
+                                b = false;
+                            }
+                            if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                                syn::LitInt{..}
+                            ))) = nested.last() {
+                                b = true;
+                            } else {
+                                b = false;
+                            }
+                            if b && nested.len() == 2{
+                                return Ok(Some(syn::Ident::new(
+                                    p.ident.to_string().as_str(),
+                                    attr.span(),
+                                )));
+                            } else {
+                                if let Some(syn::NestedMeta::Lit(ref o)) = nested.first() {
+                                    return Err(syn::Error::new_spanned( 
+                                        o,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+                                        r#"Range Error"#                   //第二个参数，决定了报错的错误信息内容
+                                    ));
+                                }
+                            }
+                        },
+                        "Length" => {
+                            let mut b = false;
+                            if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                                syn::LitInt{..}
+                            ))) = nested.first() {
+                                b = true;
+                            } else {
+                                b = false;
+                            }
+                            if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                                syn::LitInt{..}
+                            ))) = nested.last() {
+                                b = true;
+                            } else {
+                                b = false;
+                            }
+                            if b && nested.len() == 2 {
+                                return Ok(Some(syn::Ident::new(
+                                    p.ident.to_string().as_str(),
+                                    attr.span(),
+                                )));
+                            } else {
+                                if let Some(syn::NestedMeta::Lit(ref o)) = nested.first() {
+                                    return Err(syn::Error::new_spanned( 
+                                        o,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+                                        r#"Length Error"#                   //第二个参数，决定了报错的错误信息内容
+                                    ));
+                                }
+                            }
+                        },
+                        "Pattern" => {
+                            if let Some(syn::NestedMeta::Lit(syn::Lit::Str(
+                                syn::LitStr{..}
+                            ))) = nested.first() {
+                                return Ok(Some(syn::Ident::new(
+                                    p.ident.to_string().as_str(),
+                                    attr.span(),
+                                )));
+                            } else {
+                                if let Some(syn::NestedMeta::Lit(ref o)) = nested.first() {
+                                    return Err(syn::Error::new_spanned( 
+                                        o,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+                                        r#"Pattern Error"#                   //第二个参数，决定了报错的错误信息内容
+                                    ));
+                                }
+                            }
+                        },
+                        &_ => {},
+                    }
+                    //eprintln!("{} {:#?} {:#?}", attr_str, p.ident, nested.first());
+                }
+            } else {
+                if let Ok(syn::Meta::List(ref o)) = attr.parse_meta() {
+                    return Err(syn::Error::new_spanned( 
+                        o,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+                        r#"xxxxxxxxxxxxxxxxxx"#                   //第二个参数，决定了报错的错误信息内容
+                    ));
+                }
+                if let Ok(syn::Meta::Path(ref o)) = attr.parse_meta() {
+                    return Err(syn::Error::new_spanned( 
+                        o,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+                        r#"xxxxxxxxxxxxxxxxxx"#                   //第二个参数，决定了报错的错误信息内容
+                    ));
+                }
+            }
+        }
+        if let Ok(syn::Meta::Path(syn::Path {
+            ref segments,
+            ref leading_colon,
+        })) = attr.parse_meta() {
+            if segments.first().unwrap().ident == attr_str { //匹配Email
+                // eprintln!(">path>{:#?}", segments);
+                return Ok(Some(syn::Ident::new(
+                    segments.first().unwrap().ident.to_string().as_str(),
+                    attr.span(),
+                )));
+            }
+            // else {
+            //     return Err(syn::Error::new_spanned( 
+            //         attr,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+            //         r#"unkown Error"#                   //第二个参数，决定了报错的错误信息内容
+            //     ));
+            // }
+        }
+    }
+    return Ok(None);
+}
+
+fn check_filter_fields<'a>(fields: &'a syn::punctuated::Punctuated<syn::Field, syn::Token![,]>, attr_str: &str) -> syn::Result<Vec<&'a syn::Field>> {
+    let ret = fields.iter().filter(|item|{
+        check_and_take_user_specified_from_ident(item, attr_str).unwrap().is_some()
+    }).collect();
+    Ok(ret)
+}
+
+fn get_attribute_string(field: &syn::Field, attr_str: &str) -> Option<syn::LitStr> {
+    for attr in &field.attrs {
+        if let Ok(syn::Meta::List(syn::MetaList {
+            ref path,
+            ref nested,
+            ..
+        })) = attr.parse_meta() {
+            if let Some(p) = path.segments.first() {
+                if p.ident == attr_str {
+                    if let Some(syn::NestedMeta::Lit(syn::Lit::Str(
+                        litStr
+                    ))) = nested.first() {
+                        /*
+                        此处：
+                            1. 无法创建新的LitStr对象，因为正则表达式前边的r字符无法被正确的转换
+                            2. 无法返回引用，因为生命周期属于函数体
+                            所以只能克隆一个对象然后返回
+                        */
+                        return Some(litStr.clone());
+                    }
+                }
+            }
+        }
+    }
+    None
+}
+
+fn get_attribute_int(field: &syn::Field, attr_str: &str) -> Option<syn::LitInt> {
+    for attr in &field.attrs {
+        if let Ok(syn::Meta::List(syn::MetaList {
+            ref path,
+            ref nested,
+            ..
+        })) = attr.parse_meta() {
+            if let Some(p) = path.segments.first() {
+                if p.ident == attr_str {
+                    if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                        litInt
+                    ))) = nested.first() {
+                        return Some(litInt.clone());
+                    }
+                }
+            }
+        }
+    }
+    None
+}
+
+fn get_attribute_tuple(field: &syn::Field, attr_str: &str) -> Option<(syn::LitInt, syn::LitInt)> {
+    for attr in &field.attrs {
+        if let Ok(syn::Meta::List(syn::MetaList {
+            ref path,
+            ref nested,
+            ..
+        })) = attr.parse_meta() {
+            if let Some(p) = path.segments.first() {
+                if p.ident == attr_str {
+                    let mut left_value: syn::LitInt = syn::LitInt::new("0", attr.span());
+                    let mut right_value: syn::LitInt = syn::LitInt::new("0", attr.span());
+                    if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                        litInt
+                    ))) = nested.first() {
+                        left_value = litInt.clone();    
+                    };
+                    if let Some(syn::NestedMeta::Lit(syn::Lit::Int(
+                        litInt
+                    ))) = nested.last() {
+                        right_value = litInt.clone();    
+                    };
+                    let ret = (left_value, right_value);
+                    return Some(ret);
+                }
+            }
+        }
+    }
+    None
+}
+
+fn generate_email_check(fields: &syn::punctuated::Punctuated<syn::Field, syn::Token![,]>) -> syn::Result<proc_macro2::TokenStream> {
+    let emails = check_filter_fields(fields, "Email")?;
+    let vec_ts: Vec<proc_macro2::TokenStream> = emails.iter().map(|f| {
+        let item_ident = f.ident.as_ref().unwrap();
+        let _type = &f.ty;
+        quote::quote!(
+            let regex = Regex::new(r"^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$").unwrap();
+            if !regex.is_match(&self.#item_ident) {
+                return Err(format!("The Email do not match: {} : {}",stringify!(#item_ident) , r"^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$"));
+            }
+        )
+    }).collect();
+    let ret = quote::quote!(
+        #(#vec_ts)*
+    );
+    Ok(ret) 
+}
+
+fn generate_pattern_check(fields: &syn::punctuated::Punctuated<syn::Field, syn::Token![,]>) -> syn::Result<proc_macro2::TokenStream> {
+    let patterns = check_filter_fields(fields, "Pattern")?;
+    let vec_ts: Vec<proc_macro2::TokenStream> = patterns.iter().map(|f| {
+        let pattern = get_attribute_string(f, "Pattern").unwrap();
+        let item_ident = f.ident.as_ref().unwrap();
+        let _type = &f.ty;
+        quote::quote!(
+            let regex = Regex::new(#pattern).unwrap();
+            if !regex.is_match(&self.#item_ident) {
+                return Err(format!("The Email do not match: {} : {}",stringify!(#item_ident) , #pattern));
+            }
+        )
+    }).collect();
+    let ret = quote::quote!(
+        #(#vec_ts)*
+    );
+    Ok(ret) 
+}
+
+fn generate_length_check(fields: &syn::punctuated::Punctuated<syn::Field, syn::Token![,]>) -> syn::Result<proc_macro2::TokenStream> {
+    let lengths = check_filter_fields(fields, "Length")?;
+    let vec_ts: Vec<proc_macro2::TokenStream> = lengths.iter().map(|f| {
+        let (left_value, right_value) = get_attribute_tuple(f, "Length").unwrap();
+        let item_ident = f.ident.as_ref().unwrap();
+        let _type = &f.ty;
+        quote::quote!(
+            if self.#item_ident.len() > #right_value && self.#item_ident.len() < #left_value {
+                return Err(format!("The value exceeds the limit: {} : {} - {}",stringify!(#item_ident) , #left_value, #right_value));
+            }
+        )
+    }).collect();
+    let ret = quote::quote!(
+        #(#vec_ts)*
+    );
+    Ok(ret) 
+}
+
+fn generate_range_check(fields: &syn::punctuated::Punctuated<syn::Field, syn::Token![,]>) -> syn::Result<proc_macro2::TokenStream> {
+    let ranges = check_filter_fields(fields, "Range")?;
+    let vec_ts: Vec<proc_macro2::TokenStream> = ranges.iter().map(|f| {
+        let (left_value, right_value) = get_attribute_tuple(f, "Range").unwrap();
+        let item_ident = f.ident.as_ref().unwrap();
+        let _type = &f.ty;
+        quote::quote!(
+            if self.#item_ident > #right_value && self.#item_ident < #left_value {
+                return Err(format!("The value exceeds the limit: {} : {} - {}",stringify!(#item_ident) , #left_value, #right_value));
+            }
+        )
+    }).collect();
+    let ret = quote::quote!(
+        #(#vec_ts)*
+    );
+    Ok(ret) 
+}
+
+fn generate_max_check(fields: &syn::punctuated::Punctuated<syn::Field, syn::Token![,]>) -> syn::Result<proc_macro2::TokenStream> {
+    let maxs = check_filter_fields(fields, "Max")?;
+    let vec_ts: Vec<proc_macro2::TokenStream> = maxs.iter().map(|f| {
+        let value = get_attribute_int(f, "Max").unwrap();
+        let item_ident = f.ident.as_ref().unwrap();
+        let _type = &f.ty;
+        quote::quote!(
+            if self.#item_ident > #value  {
+                return Err(format!("The maximum value is greater than the set value: {} : {}",stringify!(#item_ident) , #value));
+            }
+        )
+    }).collect();
+    let ret = quote::quote!(
+        #(#vec_ts)*
+    );
+    Ok(ret) 
+}
+
+fn generate_min_check(fields: &syn::punctuated::Punctuated<syn::Field, syn::Token![,]>) -> syn::Result<proc_macro2::TokenStream> {
+    let mins = check_filter_fields(fields, "Min")?;
+    let vec_ts: Vec<proc_macro2::TokenStream> = mins.iter().map(|f| {
+        let value = get_attribute_int(f, "Min").unwrap();
+        let item_ident = f.ident.as_ref().unwrap();
+        let _type = &f.ty;
+        quote::quote!(
+            if self.#item_ident < #value  {
+                return Err(format!("The minimum value is less than the set value: {} : {}",stringify!(#item_ident) , #value));
+            }
+        )
+    }).collect();
+    let ret = quote::quote!(
+        #(#vec_ts)*
+    );
+    Ok(ret)    
+}
+
+fn do_expand_beancheck(st: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
+    let struct_name = &st.ident;
+    let fields = get_fields_from_derive_input(st)?;
+    let email_func = generate_email_check(&fields)?;
+    let pattern_func = generate_pattern_check(&fields)?;
+    let length_func = generate_length_check(&fields)?;
+    let range_func = generate_range_check(&fields)?;
+    let max_func = generate_max_check(&fields)?;
+    let min_func = generate_min_check(&fields)?;
+    
+    let str = "hello".to_string();
+    let ret = quote::quote!(
+        impl #struct_name {
+            pub fn validate(&self) -> std::result::Result<&#struct_name, std::string::String> {
+                #email_func
+                #pattern_func
+                #length_func
+                #range_func
+                #max_func
+                #min_func
+                Ok(self)
+            }
+        }
+    );
+    Ok(ret)
+}
+
+#[proc_macro_derive(BeanCheck, attributes(Min, Max, Range, Length, Pattern, Email))]
+pub fn beancheck_derive(input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as syn::DeriveInput);
+    match do_expand_beancheck(&st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => e.to_compile_error().into(),
+    }
+}
+4:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$a"}]}]
+5:["$","nav",null,{"className":"mt-12 pt-8 max-w-2xl","children":["$","div",null,{"className":"flex flex-col sm:flex-row justify-between gap-4","children":[["$","$L2",null,{"href":"/blog/rust-macro-3","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors","children":[["$","span",null,{"className":"flex items-center gap-1 text-xs text-muted-foreground","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Previous"]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust macro proc-macro-workshop solve problems 2"}]]}],["$","$L2",null,{"href":"/blog/rust-macro-1","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors text-right","children":[["$","span",null,{"className":"flex items-center justify-end gap-1 text-xs text-muted-foreground","children":["Next",["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-right size-3","aria-hidden":"true","children":[["$","path","mthhwq",{"d":"m9 18 6-6-6-6"}],"$undefined"]}]]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust macro proc-macro-workshop solve problems 1"}]]}]]}]}]
+6:["$","script","script-0",{"src":"/_next/static/chunks/49805b192645e9aa.js","async":true}]
+7:["$","script","script-1",{"src":"/_next/static/chunks/097ca8f017d5f200.js","async":true}]
+8:["$","script","script-2",{"src":"/_next/static/chunks/e95840a5bb009f36.js","async":true}]
+9:["$","$Lb",null,{"children":["$","$c",null,{"name":"Next.MetadataOutlet","children":"$@d"}]}]
+d:null

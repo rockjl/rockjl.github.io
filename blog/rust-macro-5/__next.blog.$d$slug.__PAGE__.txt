@@ -1,0 +1,506 @@
+1:"$Sreact.fragment"
+2:I[72428,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],""]
+3:I[54216,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],"CodeBlock",1]
+1f:I[26487,["/_next/static/chunks/77e7100737f17bb7.js","/_next/static/chunks/f91053d8cc2847b4.js"],"OutletBoundary"]
+20:"$Sreact.suspense"
+0:{"buildId":"ephH8wRFzzwpIEjAQmXME","rsc":["$","$1","c",{"children":[["$","section",null,{"id":"blog","children":[["$","script",null,{"type":"application/ld+json","suppressHydrationWarning":true,"dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"rust macro proc-macro-workshop solve problems 3\",\"datePublished\":\"2023-09-24\",\"dateModified\":\"2023-09-24\",\"description\":\"| 名字 | 版本号       | | ---- | ------------ | | rust | 1.69.0       | | OS   | ubuntu 22.04 |\",\"image\":\"https://rockjl.github.io/blog/rust-macro-5/opengraph-image\",\"url\":\"https://rockjl.github.io/blog/rust-macro-5\",\"author\":{\"@type\":\"Person\",\"name\":\"Jiang Liang\"}}"}}],["$","div",null,{"className":"flex justify-start gap-4 items-center","children":["$","$L2",null,{"href":"/blog","className":"text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2 py-1 inline-flex items-center gap-1 mb-6 group","aria-label":"Back to Blog","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3 group-hover:-translate-x-px transition-transform","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Back to Blog"]}]}],["$","div",null,{"className":"flex flex-col gap-4","children":[["$","h1",null,{"className":"title font-semibold text-3xl md:text-4xl tracking-tighter leading-tight","children":"rust macro proc-macro-workshop solve problems 3"}],["$","p",null,{"className":"text-sm text-muted-foreground","children":"September 24, 2023"}]]}],["$","div",null,{"className":"my-6 flex w-full items-center","children":["$","div",null,{"className":"flex-1 h-px bg-border","style":{"maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)","WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}}]}],["$","article",null,{"className":"prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert","children":[["$","div",null,{"className":"my-6 border border-border rounded-xl overflow-hidden","children":["$","div",null,{"className":"w-full overflow-x-auto","children":["$","table",null,{"className":"m-0! w-full min-w-full border-separate border-spacing-0","children":[["$","thead",null,{"children":["$","tr",null,{"children":[["$","th",null,{"children":"名字"}],["$","th",null,{"children":"版本号"}]]}]}],["$","tbody",null,{"children":[["$","tr",null,{"children":[["$","td",null,{"children":"rust"}],["$","td",null,{"children":"1.69.0"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"OS"}],["$","td",null,{"children":"ubuntu 22.04"}]]}]]}]]}]}]}],"\n",["$","p",null,{"children":"这一大关卡介绍的是属性式过程宏。"}],"\n",["$","h1",null,{"children":"第一关：01-parse-enum"}],"\n",["$","p",null,{"children":"还是简单的看我们是否已经实现了一个属性式过程宏的空架子，如果有这个空架子，就直接通过了。"}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"use proc_macro::TokenStream;\nuse proc_macro2;\nuse syn;\n\n#[proc_macro_attribute]\npub fn sorted(args: TokenStream, input: TokenStream) -> TokenStream {\n    let _ = args;\n    let _ = input;\n\n    let ret = proc_macro2::TokenStream::new();\n    ret.into()\n}\n"}]}],"\n",["$","h1",null,{"children":"第二关：02-not-enum"}],"\n",["$","p",null,{"children":"这一关增加了一个限定，限制属性式过程宏只能作用在枚举类型上，否则就报指定的错误。这里通过proc_macro2::Span::call_site()函数准确的获取调用方的span。"}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"use proc_macro::TokenStream;\nuse proc_macro2;\nuse syn;\n\n#[proc_macro_attribute]\npub fn sorted(args: TokenStream, input: TokenStream) -> TokenStream {\n    let st = syn::parse_macro_input!(input as syn::Item);\n\n    match do_expand(&st) {\n        Ok(token_stream) => token_stream.into(),\n        Err(e) => e.to_compile_error().into(),\n    }\n}\n\nfn do_expand(st: &syn::Item) -> syn::Result<proc_macro2::TokenStream> {\n    let ret = match st {\n        syn::Item::Enum(enum_node) => { Ok(proc_macro2::TokenStream::new())},\n        _ => syn::Result::Err(syn::Error::new(proc_macro2::Span::call_site(), \"expected enum or match expression\"))\n    }?;\n\n    Ok(ret)\n}\n"}]}],"\n","$L4","\n","$L5","\n","$L6","\n","$L7","\n","$L8","\n","$L9","\n","$La","\n","$Lb","\n","$Lc","\n","$Ld","\n","$Le","\n","$Lf","\n","$L10","\n","$L11","\n","$L12","\n","$L13","\n","$L14"]}],"$L15"]}],["$L16","$L17","$L18"],"$L19"]}],"loading":null,"isPartial":false}
+4:["$","h1",null,{"children":"第三关：03-out-of-order"}]
+5:["$","p",null,{"children":"这一关是错误顺序排序的一个检查。要求错误输出指定错误内容。"}]
+1a:T502,use proc_macro::TokenStream;
+use proc_macro2;
+use quote::ToTokens;
+use syn;
+
+#[proc_macro_attribute]
+pub fn sorted(args: TokenStream, input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as syn::Item);
+
+    match do_expand(&st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => e.to_compile_error().into(),
+    }
+}
+
+fn do_expand(st: &syn::Item) -> syn::Result<proc_macro2::TokenStream> {
+    let ret = match st {
+        syn::Item::Enum(enum_node) => { check_enum_order(enum_node)},
+        _ => syn::Result::Err(syn::Error::new(proc_macro2::Span::call_site(), "expected enum or match expression"))
+    }?;
+
+    Ok(ret)
+}
+
+fn check_enum_order(st: &syn::ItemEnum) -> syn::Result<proc_macro2::TokenStream> {
+    let origin_names:Vec<_> = st.variants.iter().map(|item| {
+        (item.ident.to_string(), item)
+    }).collect();
+
+    let mut sorted_origin_names = origin_names.clone();
+    sorted_origin_names.sort_by(|a, b| {
+        a.0.cmp(&b.0)
+    });
+
+    for (a,b) in origin_names.iter().zip(sorted_origin_names.iter()) {
+        if a.0 != b.0 {
+            return syn::Result::Err(syn::Error::new(b.1.ident.span(), format!("{} should sort before {}", b.0, a.0)))
+        }
+    }
+
+    return syn::Result::Ok(st.to_token_stream());
+}
+6:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$1a"}]}]
+7:["$","h1",null,{"children":"第四关：04-variants-with-data"}]
+8:["$","p",null,{"children":"这一关麻烦的一点就是，不但要求保证输出指定的错误输出，还不能因为错误导致整个枚举类型被删除。"}]
+1b:T61e,use proc_macro::TokenStream;
+use proc_macro2;
+use quote::ToTokens;
+use syn;
+
+#[proc_macro_attribute]
+pub fn sorted(args: TokenStream, input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as syn::Item);
+
+    match do_expand(&st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => {
+            let mut t = e.to_compile_error();
+            t.extend(st.to_token_stream());//普通的错误输出是不会包含任何的token的。会导我们的属性式过程宏展开的时候，删除我们的枚举体。需要把我们的枚举体加入到错误输出中。
+            t.into()
+        }
+    }
+}
+
+fn do_expand(st: &syn::Item) -> syn::Result<proc_macro2::TokenStream> {
+    let ret = match st {
+        syn::Item::Enum(enum_node) => { check_enum_order(enum_node)},
+        _ => syn::Result::Err(syn::Error::new(proc_macro2::Span::call_site(), "expected enum or match expression"))
+    }?;
+
+    Ok(ret)
+}
+
+fn check_enum_order(st: &syn::ItemEnum) -> syn::Result<proc_macro2::TokenStream> {
+    let origin_names:Vec<_> = st.variants.iter().map(|item| {
+        (item.ident.to_string(), item)
+    }).collect();
+
+    let mut sorted_origin_names = origin_names.clone();
+    sorted_origin_names.sort_by(|a, b| {
+        a.0.cmp(&b.0)
+    });
+
+    for (a,b) in origin_names.iter().zip(sorted_origin_names.iter()) {
+        if a.0 != b.0 {
+            return syn::Result::Err(syn::Error::new(b.1.ident.span(), format!("{} should sort before {}", b.0, a.0)))
+        }
+    }
+
+    return syn::Result::Ok(st.to_token_stream());
+}
+9:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$1b"}]}]
+a:["$","h1",null,{"children":"第五关：05-match-expr"}]
+b:["$","p",null,{"children":"这关要求实现两个过程宏。并且删除check属性式过程宏内部的sorted属性标签。并给予正确的预期提示。"}]
+1c:T1062,use proc_macro::TokenStream;
+use proc_macro2;
+use quote::ToTokens;
+use syn::{self, visit_mut::VisitMut};
+
+#[proc_macro_attribute]
+pub fn sorted(args: TokenStream, input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as syn::Item);
+
+    match do_expand(&st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => {
+            let mut t = e.to_compile_error();
+            t.extend(st.to_token_stream());//普通的错误输出是不会包含任何的token的。会导我们的属性式过程宏展开的时候，删除我们的枚举体。需要把我们的枚举体加入到错误输出中。
+            t.into()
+        }
+    }
+}
+
+fn do_expand(st: &syn::Item) -> syn::Result<proc_macro2::TokenStream> {
+    let ret = match st {
+        syn::Item::Enum(enum_node) => { check_enum_order(enum_node)},
+        _ => syn::Result::Err(syn::Error::new(proc_macro2::Span::call_site(), "expected enum or match expression"))
+    }?;
+
+    Ok(ret)
+}
+
+fn check_enum_order(st: &syn::ItemEnum) -> syn::Result<proc_macro2::TokenStream> {
+    let origin_names:Vec<_> = st.variants.iter().map(|item| {
+        (item.ident.to_string(), item)
+    }).collect();
+
+    let mut sorted_origin_names = origin_names.clone();
+    sorted_origin_names.sort_by(|a, b| {
+        a.0.cmp(&b.0)
+    });
+
+    for (a,b) in origin_names.iter().zip(sorted_origin_names.iter()) {
+        if a.0 != b.0 {
+            return syn::Result::Err(syn::Error::new(b.1.ident.span(), format!("{} should sort before {}", b.0, a.0)))
+        }
+    }
+
+    return syn::Result::Ok(st.to_token_stream());
+}
+
+
+// check属性式过程宏
+#[proc_macro_attribute]
+pub fn check(_args: TokenStream, input: TokenStream) -> TokenStream {
+    let mut st = syn::parse_macro_input!(input as syn::ItemFn);
+
+    match do_match_expand(&mut st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => {
+            let mut t = e.to_compile_error();
+            t.extend(st.to_token_stream());
+            t.into()
+        }
+    }
+}
+
+fn do_match_expand(st: &mut syn::ItemFn) -> syn::Result<proc_macro2::TokenStream> {
+    let mut visitor = MatchVisitor{ err: None };
+    visitor.visit_item_fn_mut(st);
+
+    if visitor.err.is_none() {
+        return syn::Result::Ok(st.to_token_stream());
+    } else {
+        return syn::Result::Err(visitor.err.unwrap());
+    }
+}
+
+fn get_path_string(p: &syn::Path) -> String {
+    let mut buf = Vec::new();
+    for i in &p.segments {
+        buf.push(i.ident.to_string());
+    }
+    return buf.join("::");
+}
+
+struct MatchVisitor {
+    err: Option<syn::Error>,
+}
+
+impl syn::visit_mut::VisitMut for MatchVisitor {
+    fn visit_expr_match_mut(&mut self, i: &mut syn::ExprMatch) {
+        let mut target_idx:isize = -1;
+        for (idx, attr) in i.attrs.iter().enumerate() {
+            if get_path_string(&attr.path) == "sorted" {
+                target_idx = idx as isize;
+                break;
+            }
+        }
+
+        if target_idx != -1 {
+            i.attrs.remove(target_idx as usize);
+            let mut match_arm_names: Vec<(_, &dyn ToTokens)> = Vec::new();
+            for arm in &i.arms {
+                match &arm.pat {
+                    syn::Pat::Path(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    syn::Pat::TupleStruct(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    syn::Pat::Struct(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    _ => {
+                        return
+                    }
+                }
+            }
+            let mut sorted_names = match_arm_names.clone();
+            sorted_names.sort_by(|a,b|{a.0.cmp(&b.0)});
+            for (a,b) in match_arm_names.iter().zip(sorted_names.iter()) {
+                if a.0 != b.0 {
+                    self.err = Some(syn::Error::new_spanned(b.1, format!("{} should sort before {}", b.0, a.0)));
+                    return;
+                }
+            }
+        }
+        syn::visit_mut::visit_expr_match_mut(self, i);
+    }
+}
+c:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$1c"}]}]
+d:["$","h1",null,{"children":"第六关：06-pattern-path"}]
+e:["$","p",null,{"children":"这一关只是比上一关的预期错误输出多了一个路径上的判断。由于我们刚才的代码可以正常通过本关测试所以不做过多改动。"}]
+f:["$","h1",null,{"children":"第七关：07-unrecognized-pattern"}]
+10:["$","p",null,{"children":"其实我们刚才代码已经写出来了。也就是说针对于复杂的无法解析的类型，我们要给出预期的错误提示。因为架子已经搭建好了，所以只需要添加一行代码。"}]
+1d:T10ca,use proc_macro::TokenStream;
+use proc_macro2;
+use quote::ToTokens;
+use syn::{self, visit_mut::VisitMut};
+
+#[proc_macro_attribute]
+pub fn sorted(args: TokenStream, input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as syn::Item);
+
+    match do_expand(&st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => {
+            let mut t = e.to_compile_error();
+            t.extend(st.to_token_stream());//普通的错误输出是不会包含任何的token的。会导我们的属性式过程宏展开的时候，删除我们的枚举体。需要把我们的枚举体加入到错误输出中。
+            t.into()
+        }
+    }
+}
+
+fn do_expand(st: &syn::Item) -> syn::Result<proc_macro2::TokenStream> {
+    let ret = match st {
+        syn::Item::Enum(enum_node) => { check_enum_order(enum_node)},
+        _ => syn::Result::Err(syn::Error::new(proc_macro2::Span::call_site(), "expected enum or match expression"))
+    }?;
+
+    Ok(ret)
+}
+
+fn check_enum_order(st: &syn::ItemEnum) -> syn::Result<proc_macro2::TokenStream> {
+    let origin_names:Vec<_> = st.variants.iter().map(|item| {
+        (item.ident.to_string(), item)
+    }).collect();
+
+    let mut sorted_origin_names = origin_names.clone();
+    sorted_origin_names.sort_by(|a, b| {
+        a.0.cmp(&b.0)
+    });
+
+    for (a,b) in origin_names.iter().zip(sorted_origin_names.iter()) {
+        if a.0 != b.0 {
+            return syn::Result::Err(syn::Error::new(b.1.ident.span(), format!("{} should sort before {}", b.0, a.0)))
+        }
+    }
+
+    return syn::Result::Ok(st.to_token_stream());
+}
+
+
+// check属性式过程宏
+#[proc_macro_attribute]
+pub fn check(_args: TokenStream, input: TokenStream) -> TokenStream {
+    let mut st = syn::parse_macro_input!(input as syn::ItemFn);
+
+    match do_match_expand(&mut st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => {
+            let mut t = e.to_compile_error();
+            t.extend(st.to_token_stream());
+            t.into()
+        }
+    }
+}
+
+fn do_match_expand(st: &mut syn::ItemFn) -> syn::Result<proc_macro2::TokenStream> {
+    let mut visitor = MatchVisitor{ err: None };
+    visitor.visit_item_fn_mut(st);
+
+    if visitor.err.is_none() {
+        return syn::Result::Ok(st.to_token_stream());
+    } else {
+        return syn::Result::Err(visitor.err.unwrap());
+    }
+}
+
+fn get_path_string(p: &syn::Path) -> String {
+    let mut buf = Vec::new();
+    for i in &p.segments {
+        buf.push(i.ident.to_string());
+    }
+    return buf.join("::");
+}
+
+struct MatchVisitor {
+    err: Option<syn::Error>,
+}
+
+impl syn::visit_mut::VisitMut for MatchVisitor {
+    fn visit_expr_match_mut(&mut self, i: &mut syn::ExprMatch) {
+        let mut target_idx:isize = -1;
+        for (idx, attr) in i.attrs.iter().enumerate() {
+            if get_path_string(&attr.path) == "sorted" {
+                target_idx = idx as isize;
+                break;
+            }
+        }
+
+        if target_idx != -1 {
+            i.attrs.remove(target_idx as usize);
+            let mut match_arm_names: Vec<(_, &dyn ToTokens)> = Vec::new();
+            for arm in &i.arms {
+                match &arm.pat {
+                    syn::Pat::Path(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    syn::Pat::TupleStruct(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    syn::Pat::Struct(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    _ => {
+                        self.err = Some(syn::Error::new_spanned(&arm.pat, "unsupported by #[sorted]"));
+                        return
+                    }
+                }
+            }
+            let mut sorted_names = match_arm_names.clone();
+            sorted_names.sort_by(|a,b|{a.0.cmp(&b.0)});
+            for (a,b) in match_arm_names.iter().zip(sorted_names.iter()) {
+                if a.0 != b.0 {
+                    self.err = Some(syn::Error::new_spanned(b.1, format!("{} should sort before {}", b.0, a.0)));
+                    return;
+                }
+            }
+        }
+        syn::visit_mut::visit_expr_match_mut(self, i);
+    }
+}
+11:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$1d"}]}]
+12:["$","h1",null,{"children":"第八关：08-underscore"}]
+13:["$","p",null,{"children":"这一关只是增加了普通的ident以及\"_\"这种wild通用类型的处理。"}]
+1e:T11f5,use proc_macro::TokenStream;
+use proc_macro2;
+use quote::ToTokens;
+use syn::{self, visit_mut::VisitMut};
+
+#[proc_macro_attribute]
+pub fn sorted(args: TokenStream, input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as syn::Item);
+
+    match do_expand(&st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => {
+            let mut t = e.to_compile_error();
+            t.extend(st.to_token_stream());//普通的错误输出是不会包含任何的token的。会导我们的属性式过程宏展开的时候，删除我们的枚举体。需要把我们的枚举体加入到错误输出中。
+            t.into()
+        }
+    }
+}
+
+fn do_expand(st: &syn::Item) -> syn::Result<proc_macro2::TokenStream> {
+    let ret = match st {
+        syn::Item::Enum(enum_node) => { check_enum_order(enum_node)},
+        _ => syn::Result::Err(syn::Error::new(proc_macro2::Span::call_site(), "expected enum or match expression"))
+    }?;
+
+    Ok(ret)
+}
+
+fn check_enum_order(st: &syn::ItemEnum) -> syn::Result<proc_macro2::TokenStream> {
+    let origin_names:Vec<_> = st.variants.iter().map(|item| {
+        (item.ident.to_string(), item)
+    }).collect();
+
+    let mut sorted_origin_names = origin_names.clone();
+    sorted_origin_names.sort_by(|a, b| {
+        a.0.cmp(&b.0)
+    });
+
+    for (a,b) in origin_names.iter().zip(sorted_origin_names.iter()) {
+        if a.0 != b.0 {
+            return syn::Result::Err(syn::Error::new(b.1.ident.span(), format!("{} should sort before {}", b.0, a.0)))
+        }
+    }
+
+    return syn::Result::Ok(st.to_token_stream());
+}
+
+
+// check属性式过程宏
+#[proc_macro_attribute]
+pub fn check(_args: TokenStream, input: TokenStream) -> TokenStream {
+    let mut st = syn::parse_macro_input!(input as syn::ItemFn);
+
+    match do_match_expand(&mut st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => {
+            let mut t = e.to_compile_error();
+            t.extend(st.to_token_stream());
+            t.into()
+        }
+    }
+}
+
+fn do_match_expand(st: &mut syn::ItemFn) -> syn::Result<proc_macro2::TokenStream> {
+    let mut visitor = MatchVisitor{ err: None };
+    visitor.visit_item_fn_mut(st);
+
+    if visitor.err.is_none() {
+        return syn::Result::Ok(st.to_token_stream());
+    } else {
+        return syn::Result::Err(visitor.err.unwrap());
+    }
+}
+
+fn get_path_string(p: &syn::Path) -> String {
+    let mut buf = Vec::new();
+    for i in &p.segments {
+        buf.push(i.ident.to_string());
+    }
+    return buf.join("::");
+}
+
+struct MatchVisitor {
+    err: Option<syn::Error>,
+}
+
+impl syn::visit_mut::VisitMut for MatchVisitor {
+    fn visit_expr_match_mut(&mut self, i: &mut syn::ExprMatch) {
+        let mut target_idx:isize = -1;
+        for (idx, attr) in i.attrs.iter().enumerate() {
+            if get_path_string(&attr.path) == "sorted" {
+                target_idx = idx as isize;
+                break;
+            }
+        }
+
+        if target_idx != -1 {
+            i.attrs.remove(target_idx as usize);
+            let mut match_arm_names: Vec<(_, &dyn ToTokens)> = Vec::new();
+            for arm in &i.arms {
+                match &arm.pat {
+                    syn::Pat::Path(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    syn::Pat::TupleStruct(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    syn::Pat::Struct(p) => {
+                        match_arm_names.push((get_path_string(&p.path), &p.path));
+                    }
+                    syn::Pat::Ident(ii) => {
+                        match_arm_names.push((ii.ident.to_string(), &ii.ident));
+                    }
+                    syn::Pat::Wild(w) => {
+                        match_arm_names.push(("_".to_string(), &w.underscore_token));
+                    }
+                    _ => {
+                        self.err = Some(syn::Error::new_spanned(&arm.pat, "unsupported by #[sorted]"));
+                        return
+                    }
+                }
+            }
+            let mut sorted_names = match_arm_names.clone();
+            sorted_names.sort_by(|a,b|{a.0.cmp(&b.0)});
+            for (a,b) in match_arm_names.iter().zip(sorted_names.iter()) {
+                if a.0 != b.0 {
+                    self.err = Some(syn::Error::new_spanned(b.1, format!("{} should sort before {}", b.0, a.0)));
+                    return;
+                }
+            }
+        }
+        syn::visit_mut::visit_expr_match_mut(self, i);
+    }
+}
+14:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$1e"}]}]
+15:["$","nav",null,{"className":"mt-12 pt-8 max-w-2xl","children":["$","div",null,{"className":"flex flex-col sm:flex-row justify-between gap-4","children":[["$","$L2",null,{"href":"/blog/rock_waypoint","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors","children":[["$","span",null,{"className":"flex items-center gap-1 text-xs text-muted-foreground","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Previous"]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"High-Performance Gateway"}]]}],["$","$L2",null,{"href":"/blog/rust-macro-4","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors text-right","children":[["$","span",null,{"className":"flex items-center justify-end gap-1 text-xs text-muted-foreground","children":["Next",["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-right size-3","aria-hidden":"true","children":[["$","path","mthhwq",{"d":"m9 18 6-6-6-6"}],"$undefined"]}]]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust macro proc-macro-workshop solve problems 3"}]]}]]}]}]
+16:["$","script","script-0",{"src":"/_next/static/chunks/49805b192645e9aa.js","async":true}]
+17:["$","script","script-1",{"src":"/_next/static/chunks/097ca8f017d5f200.js","async":true}]
+18:["$","script","script-2",{"src":"/_next/static/chunks/e95840a5bb009f36.js","async":true}]
+19:["$","$L1f",null,{"children":["$","$20",null,{"name":"Next.MetadataOutlet","children":"$@21"}]}]
+21:null

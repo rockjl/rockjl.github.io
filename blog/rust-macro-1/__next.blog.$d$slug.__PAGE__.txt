@@ -1,0 +1,351 @@
+1:"$Sreact.fragment"
+2:I[72428,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],""]
+3:I[54216,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],"CodeBlock",1]
+a:I[26487,["/_next/static/chunks/77e7100737f17bb7.js","/_next/static/chunks/f91053d8cc2847b4.js"],"OutletBoundary"]
+b:"$Sreact.suspense"
+4:T33c4,use proc_macro::TokenStream;
+use syn::{self, spanned::Spanned};
+use quote::{self, ToTokens};
+use regex::{Regex, Captures};
+
+#[proc_macro_derive(Builder, attributes(builder))]
+pub fn derive(input: TokenStream) -> TokenStream { //派生宏主函数
+    let st = syn::parse_macro_input!(input as syn::DeriveInput);
+    match do_expend(&st) {
+        Ok(token_stream) => token_stream.into(),
+        Err(e) => e.to_compile_error().into(),
+    }
+}
+
+type StructField = syn::punctuated::Punctuated<syn::Field, syn::Token![,]>;
+fn get_fields_from_derive_input(st: &syn::DeriveInput) -> syn::Result<&StructField> { //通过DeriveInput类型获得结构体内部的成员变量列表
+    //这里使用了三种不同的实现方式
+    if let syn::Data::Struct(syn::DataStruct{
+        fields:syn::Fields::Named(syn::FieldsNamed{
+            ref named, ..
+        }), ..
+    }) = st.data {
+        return Ok(named)
+    }
+    //.........................................................
+    // match st.data {
+    //     syn::Data::Struct(syn::DataStruct{
+    //         fields:syn::Fields::Named(syn::FieldsNamed{
+    //             ref named, 
+    //             ref brace_token
+    //         }), ..
+    //     }) => {
+    //         return Ok(named);
+    //     },
+    //     _ => {},
+    // }
+    //.........................................................
+    // match &st.data {
+    //     syn::Data::Struct(ds) => {
+    //         match &ds.fields {
+    //             syn::Fields::Named(fieldName) => {
+    //                 return Ok(&fieldName.named);
+    //             },
+    //             _ => {}
+    //         }
+    //     },
+    //     _ => {},
+    // }
+    Err(syn::Error::new_spanned(st, "Must Define On Struct, Not On Enum".to_string()))
+}
+
+fn generate_builder_struct_fields_def(st: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {//构建结构体CommandBuilder内部成员变量的循环生成
+    let fields = get_fields_from_derive_input(st)?;
+    let idents: Vec<_> = fields.iter().map(|f| &f.ident).collect();
+    let types: syn::Result<Vec<_>> = fields.iter().map(|f| {
+        if let Some(inner_type) = get_generic_inner_type(&f.ty, "Option") {
+            Ok(quote::quote!(
+                std::option::Option<#inner_type>
+            ))
+        } else if get_user_specified_ident_for_vec(f)?.is_some() {
+            let origin_type = &f.ty;
+            Ok(quote::quote!(
+                #origin_type
+            ))
+        } else {
+            let origin_type = &f.ty;
+            Ok(quote::quote!(
+                std::option::Option<#origin_type>
+            ))
+        }
+    }).collect();
+
+    let types = types?;
+
+    let ret = quote::quote!(
+        #( #idents: #types ),*
+    );
+    Ok(ret)
+}
+
+fn generate_builder_struct_factory_init_clauses(st: &syn::DeriveInput) -> syn::Result<Vec<proc_macro2::TokenStream>> {//Command的builder函数获得CommandBuilder对象，本函数实现CommandBuilder对象内的属性循环生成
+    let fields = get_fields_from_derive_input(st)?;
+    let init_cluase: syn::Result<Vec<_>> = fields.iter().map(|f| {
+        let ident = &f.ident;
+        if get_user_specified_ident_for_vec(&f)?.is_some() {
+            Ok(quote::quote!(
+                #ident: std::vec::Vec::new()
+            ))
+        } else {
+            Ok(quote::quote!(
+                #ident: std::option::Option::None
+            ))
+        }
+    }).collect();
+    Ok(init_cluase?)
+}
+
+fn generate_setter_functions(st: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {//生成一堆setter函数
+    let fields = get_fields_from_derive_input(st)?;
+    let idents: Vec<_> = fields.iter().map(|f| &f.ident).collect();
+    let types: Vec<_> = fields.iter().map(|f| &f.ty).collect();
+
+    let mut final_tokenstream = proc_macro2::TokenStream::new();
+    for (idx, (ident,type_)) in idents.iter().zip(types.iter()).enumerate() {//zip把两个不同的iter迭代器，压缩到一起形成一个元祖类型，然后我们用模式匹配获取元祖中的值
+        let tokenstream_piece = if let Some(inner_type) = get_generic_inner_type(type_, "Option") {
+            quote::quote!(
+                fn #ident(&mut self, #ident: #inner_type) -> &mut Self {
+                    self.#ident = std::option::Option::Some(#ident);
+                    self
+                }
+            )
+        } else if let Some(ref user_specified_ident) = get_user_specified_ident_for_vec(&fields[idx])? {
+            let inner_type 
+                = get_generic_inner_type(type_, "Vec")
+                    .ok_or(syn::Error::new(fields[idx].span(), "`each` field must be a Vec Type"))?;
+            
+            let mut r = quote::quote!(
+                fn #user_specified_ident(&mut self, #user_specified_ident: #inner_type) -> &mut Self {
+                    self.#ident.push(#user_specified_ident);
+                    self
+                }
+            );
+            if user_specified_ident != ident.as_ref().unwrap() {
+                r.extend(
+                    quote::quote!(
+                        fn #ident(&mut self, #ident:#type_) -> &mut Self {
+                            self.#ident = #ident.clone();
+                            self
+                        }
+                    )
+                );
+            }
+            r
+        } else {
+            quote::quote!(
+                fn #ident(&mut self, #ident: #type_) -> &mut Self {
+                    self.#ident = std::option::Option::Some(#ident);
+                    self
+                }
+            )
+        };
+        final_tokenstream.extend(tokenstream_piece);//追加tokenstream到最终tokenstream
+    }
+    Ok(final_tokenstream)
+}
+
+fn generate_build_function(st: &syn::DeriveInput, struct_name_literal: &str) -> syn::Result<proc_macro2::TokenStream> {//给CommandBuilder构建builder函数，用来实现Command
+    let fields = get_fields_from_derive_input(st)?;
+    //第一种实现
+    // let struct_name_literal = syn::Ident::new(&struct_name_literal, st.span());
+    // let mut checker_code_pieces = Vec::new();
+    // for idx in 0..fields.len() {
+    //     let ident = &fields[idx].ident;
+    //     if get_generic_inner_type(&fields[idx].ty, "Option").is_none() && 
+    //         get_user_specified_ident_for_vec(&fields[idx])?.is_none(){
+    //         checker_code_pieces.push( //利用stringfy!宏，把ident类型转换成string
+    //             quote::quote!(
+    //                 if self.#ident.is_none() {
+    //                     let err = format!("{} field is missing", stringify!(#ident)); 
+    //                     return std::result::Result::Err(err.into());
+    //                 }
+    //             )
+    //         );
+    //     } else {
+    //         checker_code_pieces.push( 
+    //             proc_macro2::TokenStream::new()
+    //         );
+    //     }
+    // }
+
+    // let mut fill_result_class = Vec::new();
+    // for idx in 0..fields.len() {
+    //     let ident = &fields[idx].ident.as_ref().unwrap();
+        
+    //     if get_user_specified_ident_for_vec(&fields[idx])?.is_some() {
+    //         fill_result_class.push(
+    //             quote::quote!(
+    //                 #ident: self.#ident.clone()
+    //             )
+    //         );
+    //     } else if get_generic_inner_type(&fields[idx].ty, "Option").is_none() {
+    //         fill_result_class.push(
+    //             quote::quote!(
+    //                 #ident: self.#ident.clone().unwrap()
+    //             )
+    //         );
+    //     } else {
+    //         fill_result_class.push(
+    //             quote::quote!(
+    //                 #ident: self.#ident.clone()
+    //             )
+    //         );
+    //     }
+    // }
+    // let token_stream = quote::quote!(
+    //     pub fn build(&mut self) -> 
+    //         std::result::Result<#struct_name_literal, std::boxed::Box<dyn std::error::Error>> {
+    //         #( #checker_code_pieces )*
+
+    //         let ret = #struct_name_literal {
+    //             #( #fill_result_class ),*
+    //         };
+    //         return std::result::Result::Ok(ret);
+    //     }
+    // );
+    // Ok(token_stream)
+
+    //第二种实现
+    let loop_field: syn::Result<Vec<_>> = fields.iter().map(|f| {
+        let ident = &f.ident.as_ref().unwrap();
+        if get_generic_inner_type(&f.ty, "Option").is_none() && 
+            get_user_specified_ident_for_vec(&f)?.is_none() {
+            Ok(quote::quote!(
+                if self.#ident.is_none() {
+                    let err = format!("{} field is missing", stringify!(#ident)); 
+                    return std::result::Result::Err(err.into());
+                }
+            ))
+        } else {
+            Ok(proc_macro2::TokenStream::new())
+        }
+    }).collect();
+    let loop_field = loop_field?;
+
+    let struct_field: syn::Result<Vec<_>> = fields.iter().map(|f| {
+        let ident = &f.ident.as_ref().unwrap();
+        if get_user_specified_ident_for_vec(&f)?.is_some() {
+            Ok(quote::quote!(
+                #ident: self.#ident.clone()
+            ))
+        } else if get_generic_inner_type(&f.ty, "Option").is_none() {
+            Ok(quote::quote!(
+                #ident: self.#ident.clone().unwrap()
+            ))
+        } else {
+            Ok(quote::quote!(
+                #ident: self.#ident.clone()
+            ))
+        }
+    }).collect();
+    let struct_field = struct_field?;
+    let struct_name_literal = syn::Ident::new(struct_name_literal, st.span());
+
+    let ret = quote::quote!(
+        pub fn build(&mut self) -> std::result::Result<#struct_name_literal, std::boxed::Box<dyn std::error::Error>> {
+            #( #loop_field )*
+
+            let ret = #struct_name_literal {
+                #( #struct_field ),*
+            };
+            return std::result::Result::Ok(ret);
+        }
+    );
+    return Ok(ret);
+
+}
+
+fn get_generic_inner_type<'a>(t: &'a syn::Type, outer_ident_name: &str) -> Option<&'a syn::Type> {// 匹配获得成员变量属性
+    if let syn::Type::Path(syn::TypePath{ 
+        path: syn::Path{segments ,..}, ..}) = t {
+        if let Some(seg) = segments.last() {
+            if seg.ident.to_string() == outer_ident_name {
+                if let syn::PathArguments::AngleBracketed(
+                    syn::AngleBracketedGenericArguments{args,..} 
+                ) = &seg.arguments {
+                    if let Some(syn::GenericArgument::Type(inner_type)) = args.first() {
+                        return Some(inner_type);
+                    }
+                }
+            }
+        }
+    }
+    None
+}
+
+fn get_user_specified_ident_for_vec(field: &syn::Field) -> syn::Result<Option<syn::Ident>> {
+    for attr in &field.attrs {
+        if let Ok(syn::Meta::List(syn::MetaList {
+            ref path,
+            ref nested,
+            ..
+        })) = attr.parse_meta() {
+            if let Some(p) = path.segments.first() {
+                if p.ident == "builder" {
+                    if let Some(syn::NestedMeta::Meta(syn::Meta::NameValue(kv))) = nested.first() {
+                        if kv.path.is_ident("each") {
+                            if let syn::Lit::Str(ref ident_str) = kv.lit {
+                                return Ok(Some(syn::Ident::new(
+                                    ident_str.value().as_str(),
+                                    attr.span(),
+                                )));
+                            } 
+                        } else {
+                            if let Ok(syn::Meta::List(ref list)) = attr.parse_meta() {
+                                return Err(syn::Error::new_spanned( 
+                                    list,                             //第一个参数，决定了报错的范围，‘^'符号指向的范围
+                                    r#"expected `builder(each = "...")`"#                   //第二个参数，决定了报错的错误信息内容
+                                ));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Ok(None)
+}
+
+fn do_expend(st: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {//展开拼接TokenStream的总函数
+    let struct_name_literal =  st.ident.to_string();
+    let builder_name_literal = format!("{}Builder", struct_name_literal);
+    let builder_name_ident = syn::Ident::new(&builder_name_literal, st.span());
+    let struct_ident = &st.ident;
+    let builder_struct_field_ref = generate_builder_struct_fields_def(st)?;
+    let builder_struct_factory_init_clauses = generate_builder_struct_factory_init_clauses(st)?;
+    let setter_functions = generate_setter_functions(st)?;
+    let build_function = generate_build_function(st, &struct_name_literal)?;
+
+    let ret = quote::quote! {
+        pub struct #builder_name_ident {
+            #builder_struct_field_ref //展开TokenStream
+        }
+        impl #struct_ident {
+            pub fn builder() -> #builder_name_ident {
+                #builder_name_ident {
+                    #( #builder_struct_factory_init_clauses ),* //展开Vec<TokenStream>
+                }
+            }
+        }
+        impl #builder_name_ident {
+            #setter_functions
+        }
+
+        impl #builder_name_ident {
+            #build_function
+        }
+    };
+    Ok(ret)
+}
+0:{"buildId":"ephH8wRFzzwpIEjAQmXME","rsc":["$","$1","c",{"children":[["$","section",null,{"id":"blog","children":[["$","script",null,{"type":"application/ld+json","suppressHydrationWarning":true,"dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"rust macro proc-macro-workshop solve problems 1\",\"datePublished\":\"2023-09-20\",\"dateModified\":\"2023-09-20\",\"description\":\"| 名字 | 版本号       | | ---- | ------------ | | rust | 1.69.0       | | OS   | Ubuntu 22.04 |\",\"image\":\"https://rockjl.github.io/blog/rust-macro-1/opengraph-image\",\"url\":\"https://rockjl.github.io/blog/rust-macro-1\",\"author\":{\"@type\":\"Person\",\"name\":\"Jiang Liang\"}}"}}],["$","div",null,{"className":"flex justify-start gap-4 items-center","children":["$","$L2",null,{"href":"/blog","className":"text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2 py-1 inline-flex items-center gap-1 mb-6 group","aria-label":"Back to Blog","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3 group-hover:-translate-x-px transition-transform","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Back to Blog"]}]}],["$","div",null,{"className":"flex flex-col gap-4","children":[["$","h1",null,{"className":"title font-semibold text-3xl md:text-4xl tracking-tighter leading-tight","children":"rust macro proc-macro-workshop solve problems 1"}],["$","p",null,{"className":"text-sm text-muted-foreground","children":"September 20, 2023"}]]}],["$","div",null,{"className":"my-6 flex w-full items-center","children":["$","div",null,{"className":"flex-1 h-px bg-border","style":{"maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)","WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}}]}],["$","article",null,{"className":"prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert","children":[["$","div",null,{"className":"my-6 border border-border rounded-xl overflow-hidden","children":["$","div",null,{"className":"w-full overflow-x-auto","children":["$","table",null,{"className":"m-0! w-full min-w-full border-separate border-spacing-0","children":[["$","thead",null,{"children":["$","tr",null,{"children":[["$","th",null,{"children":"名字"}],["$","th",null,{"children":"版本号"}]]}]}],["$","tbody",null,{"children":[["$","tr",null,{"children":[["$","td",null,{"children":"rust"}],["$","td",null,{"children":"1.69.0"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"OS"}],["$","td",null,{"children":"Ubuntu 22.04"}]]}]]}]]}]}]}],"\n",["$","p",null,{"children":"builder这个目录的所有test主要测试的是派生宏的编写能力。\n我就直接粘贴我的答案了。不做过多解释了。答案都是联通的，可以跑通builder 1-9关的测试用例。\nlib.rs"}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$4"}]}]]}],"$L5"]}],["$L6","$L7","$L8"],"$L9"]}],"loading":null,"isPartial":false}
+5:["$","nav",null,{"className":"mt-12 pt-8 max-w-2xl","children":["$","div",null,{"className":"flex flex-col sm:flex-row justify-between gap-4","children":[["$","$L2",null,{"href":"/blog/rust-macro-2","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors","children":[["$","span",null,{"className":"flex items-center gap-1 text-xs text-muted-foreground","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Previous"]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust macro proc-macro-workshop solve problems 1.1"}]]}],["$","$L2",null,{"href":"/blog/rust-macro-begin","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors text-right","children":[["$","span",null,{"className":"flex items-center justify-end gap-1 text-xs text-muted-foreground","children":["Next",["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-right size-3","aria-hidden":"true","children":[["$","path","mthhwq",{"d":"m9 18 6-6-6-6"}],"$undefined"]}]]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust macro proc-macro-workshop begin"}]]}]]}]}]
+6:["$","script","script-0",{"src":"/_next/static/chunks/49805b192645e9aa.js","async":true}]
+7:["$","script","script-1",{"src":"/_next/static/chunks/097ca8f017d5f200.js","async":true}]
+8:["$","script","script-2",{"src":"/_next/static/chunks/e95840a5bb009f36.js","async":true}]
+9:["$","$La",null,{"children":["$","$b",null,{"name":"Next.MetadataOutlet","children":"$@c"}]}]
+c:null

@@ -1,0 +1,98 @@
+1:"$Sreact.fragment"
+2:I[72428,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],""]
+3:I[54216,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],"CodeBlock",1]
+2b:I[26487,["/_next/static/chunks/77e7100737f17bb7.js","/_next/static/chunks/f91053d8cc2847b4.js"],"OutletBoundary"]
+2c:"$Sreact.suspense"
+0:{"buildId":"ephH8wRFzzwpIEjAQmXME","rsc":["$","$1","c",{"children":[["$","section",null,{"id":"blog","children":[["$","script",null,{"type":"application/ld+json","suppressHydrationWarning":true,"dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"rust smart pointers\",\"datePublished\":\"2023-03-20\",\"dateModified\":\"2023-03-20\",\"description\":\"最简单的智能指针，rust的大部分标准库struct或标量类型是优先采用stack分配内存的。在大部分语言中，stack大小是在编译期确定的，二heap大小是在运行期确定的。rust中可以使用Box把任意类型放到heap中存储。 使用...\",\"image\":\"https://rockjl.github.io/blog/rust-smart-pointers/opengraph-image\",\"url\":\"https://rockjl.github.io/blog/rust-smart-pointers\",\"author\":{\"@type\":\"Person\",\"name\":\"Jiang Liang\"}}"}}],["$","div",null,{"className":"flex justify-start gap-4 items-center","children":["$","$L2",null,{"href":"/blog","className":"text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2 py-1 inline-flex items-center gap-1 mb-6 group","aria-label":"Back to Blog","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3 group-hover:-translate-x-px transition-transform","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Back to Blog"]}]}],["$","div",null,{"className":"flex flex-col gap-4","children":[["$","h1",null,{"className":"title font-semibold text-3xl md:text-4xl tracking-tighter leading-tight","children":"rust smart pointers"}],["$","p",null,{"className":"text-sm text-muted-foreground","children":"March 20, 2023"}]]}],["$","div",null,{"className":"my-6 flex w-full items-center","children":["$","div",null,{"className":"flex-1 h-px bg-border","style":{"maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)","WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}}]}],["$","article",null,{"className":"prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert","children":[["$","h2",null,{"children":"Box"}],"\n",["$","p",null,{"children":"最简单的智能指针，rust的大部分标准库struct或标量类型是优先采用stack分配内存的。在大部分语言中，stack大小是在编译期确定的，二heap大小是在运行期确定的。rust中可以使用Box把任意类型放到heap中存储。\n使用场景："}],"\n",["$","ul",null,{"children":["\n",["$","li",null,{"children":"某个类型编译时大小未知，但是需要在确定大小的上下文中使用这个类型。"}],"\n",["$","li",null,{"children":"当有大量数据，并且希望数据不被拷贝的情况下仅仅只是转移所有权。"}],"\n",["$","li",null,{"children":"当希望拥有一个值，并且只关心它时候实现了某个trait而不关心值的具体类型的时候。"}],"\n"]}],"\n",["$","h2",null,{"children":"Rc"}],"\n",["$","ul",null,{"children":["\n",["$","li",null,{"children":"在编译时确定借用数量，如果不符合借用规则，则报错。"}],"\n",["$","li",null,{"children":"strong_count()函数返回强引用计数，数量。"}],"\n",["$","li",null,{"children":"weak_count()函数返回弱引用计数，数量。"}],"\n",["$","li",null,{"children":"当强引用计数清零后才可以Drop。"}],"\n"]}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"\tlet r = Rc::new(10);\n    println!(\"{}\", r);\n\n    let r1 = r.clone();\n    let r2 = Rc::clone(&r);\n    println!(\"{}\", r1);\n    println!(\"{}\", r2);\n    println!(\"打印计数器\");\n    println!(\"{},{},{}\", Rc::strong_count(&r), Rc::strong_count(&r1), Rc::strong_count(&r2));\n    println!(\"{},{},{}\", Rc::weak_count(&r), Rc::weak_count(&r1), Rc::weak_count(&r2));\n    \n    let r3 = Rc::downgrade(&r);\n    let r4 = Rc::downgrade(&r);\n\n    println!(\"打印计数器\");\n    println!(\"{},{},{}\", Rc::strong_count(&r), Rc::strong_count(&r1), Rc::strong_count(&r2));\n    println!(\"{},{},{}\", Rc::weak_count(&r), Rc::weak_count(&r1), Rc::weak_count(&r2));\n\n    println!(\"r1:{} r2:{} r3:{:?} r4:{:?}\", r1, r2, r3.upgrade().unwrap(), r4.upgrade().unwrap());\n\n    println!(\"打印计数器\");\n    println!(\"{},{},{}\", Rc::strong_count(&r), Rc::strong_count(&r1), Rc::strong_count(&r2));\n    println!(\"{},{},{}\", Rc::weak_count(&r), Rc::weak_count(&r1), Rc::weak_count(&r2));\n"}]}],"\n","$L4","\n","$L5","\n","$L6","\n","$L7","\n","$L8","\n","$L9","\n","$La","\n","$Lb","\n","$Lc","\n","$Ld","\n","$Le","\n","$Lf","\n","$L10","\n","$L11","\n","$L12","\n","$L13","\n","$L14","\n","$L15","\n","$L16","\n","$L17","\n","$L18","\n","$L19","\n","$L1a","\n","$L1b","\n","$L1c","\n","$L1d","\n","$L1e","\n","$L1f","\n","$L20","\n","$L21","\n","$L22","\n","$L23","\n","$L24"]}],"$L25"]}],["$L26","$L27","$L28"],"$L29"]}],"loading":null,"isPartial":false}
+4:["$","h2",null,{"children":"Cell"}]
+5:["$","ul",null,{"children":["\n",["$","li",null,{"children":"最简单的可变智能指针，它通过set和get两个函数可以对外部已经确定的不可变的变量，修改其内部的值。"}],"\n"]}]
+6:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"#[derive(Debug)]\nstruct SomeStruct {\n    r: i32,\n    s: Cell<i32>\n}\nfn main(){\n\tlet ms = SomeStruct {\n        r: 11,\n        s: Cell::new(5),\n    };\n\n    // ms.r = 12;//无法编译通过\n    println!(\"{:?}\", ms);\n    ms.s.set(100);\n    println!(\"{:?}\", ms);\n}\n"}]}]
+7:["$","h2",null,{"children":"Rc-Weak"}]
+8:["$","ul",null,{"children":["\n",["$","li",null,{"children":"类似Rc，但不持有所有权，仅仅保存指向数据的弱引用。"}],"\n",["$","li",null,{"children":"需要使用upgrade函数升级到Rc才能获得引用指向的数据。"}],"\n",["$","li",null,{"children":"不保证引用关系的存在，不阻止Drop，如果不存在upgrade函数则返回一个none。"}],"\n"]}]
+9:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"\tlet r = Rc::new(5);\n    let w_r = Rc::downgrade(&r);\n\n    if let Some(r1) = w_r.upgrade() {\n        println!(\"值还存在\");\n    }\n\n    drop(r);\n\n    if let None = w_r.upgrade() {\n        println!(\"值不存在了\");\n    }\n"}]}]
+a:["$","h2",null,{"children":"RefCell"}]
+b:["$","ul",null,{"children":["\n",["$","li",null,{"children":"在运行时确定借用数量，如果不符合借用规则，则报错。"}],"\n",["$","li",null,{"children":"可在外部已经确定变量不可变的情况下修改变量内部的值。"}],"\n",["$","li",null,{"children":"与Cell不同的是它多了内部记录借用数量，并且保证运行期借用规则。"}],"\n"]}]
+c:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"struct A {\n    v: Vec<String>\n}\nfn main(){\n\tlet a = A{v:vec![]};\n    a.v.push(\"s\".to_string());\n}\n"}]}]
+d:["$","p",null,{"children":"这种情况下会报编译错误。它让你增加mut去声明变量a。"}]
+e:["$","$L3",null,{"children":["$","code",null,{"className":"language-bash","children":"error[E0596]: cannot borrow `a.v` as mutable, as `a` is not declared as mutable\n   --> src/test_senior/test_smart_pointer.rs:119:5\n    |\n119 |     a.v.push(\"s\".to_string());\n    |     ^^^^^^^^^^^^^^^^^^^^^^^^^ cannot borrow as mutable\n    |\nhelp: consider changing this to be mutable\n    |\n118 |     let mut a = A{v:vec![]};\n    |         +++\n\nerror: aborting due to previous error\n"}]}]
+f:["$","p",null,{"children":"但是可以通过RefCell改变这种情况。"}]
+10:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"struct A {\n    v: RefCell<Vec<String>>\n}\nfn main(){\n\tlet a = A{ v: RefCell::new(vec![])};\n    a.v.borrow_mut().push(\"h\".to_string());\n}\n"}]}]
+11:["$","h2",null,{"children":"Rc + RefCell测试"}]
+12:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"#[derive(Debug)]\nstruct RcRefCell {\n    i: i32,\n    rr: Rc<RefCell<i32>>,\n}\nfn main() {\n\tlet value = Rc::new(RefCell::new(5));\n\n    let rrc1 = RcRefCell{ i: 11, rr: Rc::clone(&value) };\n    let rrc2 = RcRefCell{ i: 22, rr: Rc::clone(&value) };\n\n    //与如下等价\n    // let mut l = (*value).borrow_mut();\n    // *l = 20;\n    // drop(l);\n\n    //单行使用方式\n    *(*value).borrow_mut() = 10;\n\n    println!(\"value:{:?}\", *value);\n    println!(\"rcc1:{:?}\", rrc1);\n    println!(\"rcc2:{:?}\", rrc2);\n}\n"}]}]
+13:["$","h2",null,{"children":"OnceCell"}]
+14:["$","ul",null,{"children":["\n",["$","li",null,{"children":"这个智能指针比较简单，只可以设置一次，其余的设置无效。"}],"\n",["$","li",null,{"children":"set函数可以调用多次，但是只有第一次生效。"}],"\n",["$","li",null,{"children":"get_or_init函数和get_or_try_init函数的意思是获得智能指针内的值，如果有的直接获得，如果没有就设置一个。"}],"\n"]}]
+15:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"\tlet a = OnceCell::new();\n    a.set(33);\n    println!(\"a:{:?}\", a);\n    a.set(44);\n    println!(\"a:{:?}\", a);\n\n    let b = OnceCell::new();\n    let c = OnceCell::new();\n    let b1 = b.get_or_init(|| {\n        66\n    });\n    let a1 = a.get_or_init(|| {\n        77\n    });\n    let c1 = c.get_or_try_init(|| -> Result<i32, ()> {\n        Ok(88)\n    });\n\n    println!(\"a1:{:?}\", a1);\n    println!(\"b1:{:?}\", b1);\n    println!(\"c1:{:?}\", c1);\n"}]}]
+16:["$","h2",null,{"children":"LazyCell"}]
+17:["$","ul",null,{"children":["\n",["$","li",null,{"children":"这个智能指针会晚一些初始化，它会在使用之前初始化，但是只会初始化一次。而不是变量创建的时候初始化。"}],"\n"]}]
+18:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"\tlet a = LazyCell::new(|| {\n        println!(\"begin init lazycell\");\n        \"helloworld\".to_string()\n    });\n    println!(\"after define a\");\n    println!(\"a:{:?}\", *a);\n    println!(\"a:{:?}\", *a);\n"}]}]
+19:["$","h2",null,{"children":"Arc"}]
+1a:["$","ul",null,{"children":["\n",["$","li",null,{"children":"是Rc的多线程版本。"}],"\n",["$","li",null,{"children":"可以跨线程传递，用于跨线程共享一个对象。"}],"\n",["$","li",null,{"children":"Arc持有的变量，堆可变性没有要求。"}],"\n",["$","li",null,{"children":"一旦最后一个拥有者小时，资源会被回收。"}],"\n"]}]
+1b:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"let arc = Arc::new(Mutex::new(0));\n    let mut threads = vec![];\n    for idx in 0..10 {\n        let share_obj = arc.clone();\n        let mut name = \"thread\".to_string();\n        name.push_str(idx.to_string().as_str());\n        let t = thread::Builder::new()\n        .name(name).spawn( move || {\n            let s = thread::current().name().unwrap().to_string();\n            println!(\"thread:{}准备获得锁\", s);\n            let mut count = share_obj.lock().unwrap();\n            println!(\"thread:{}已经获得锁\", s);\n            \n            thread::sleep(Duration::from_millis(1000 * 1));\n            *count += 1;\n        }).unwrap();\n        threads.push(t);\n    }\n    for t in threads {\n        t.join();\n    }\n    let a = *arc.lock().unwrap();\n    println!(\"{}\", a);\n"}]}]
+1c:["$","h2",null,{"children":"Arc-Weak"}]
+1d:["$","ul",null,{"children":["\n",["$","li",null,{"children":"Rc-Weak的多线程版本。"}],"\n",["$","li",null,{"children":"在std::sync::Weak。"}],"\n",["$","li",null,{"children":"其余与Rc-Weak一致。"}],"\n"]}]
+1e:["$","h2",null,{"children":"Mutex"}]
+1f:["$","ul",null,{"children":["\n",["$","li",null,{"children":"能够保证同一时刻只有一个线程可以访问锁。"}],"\n",["$","li",null,{"children":"访问数据前，需要先获得锁。"}],"\n",["$","li",null,{"children":"处理完Mutex保护的数据后，必须立刻解锁，保证其他线程可以在第一时间获得锁。"}],"\n",["$","li",null,{"children":"不像是java中有unlock来释放锁。在rust中可以通过drop释放Mutex的保护数据，来在作用域中释放Mutex。"}],"\n"]}]
+20:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"\tlet counter = Arc::new(Mutex::new(0));\n    let mut handles = vec![];\n    for idx in 0..10 {\n        let counter = counter.clone();\n        let mut name = \"thread\".to_string();\n        name.push_str(idx.to_string().as_str());\n        let handle = thread::Builder::new()\n        .name(name).spawn(move || {\n            let s = thread::current().name().unwrap().to_string();\n            println!(\"thread:{}--准备获得锁\", s);\n            let mut num = counter.lock().unwrap();\n            println!(\"thread:{}++已经获得锁\", s);\n            thread::sleep(Duration::from_millis(1000 * 1));\n            *num += 1;\n            println!(\"thread:{}++准备释放锁\", s);\n            drop(num);\n            thread::sleep(Duration::from_millis(100));\n            println!(\"thread:{}--已经释放锁\", s);\n        }).unwrap();\n        handles.push(handle);\n    }\n    for handle in handles {\n        handle.join().unwrap();\n    }\n    println!(\"Result: {}\", *counter.lock().unwrap());\n"}]}]
+21:["$","h2",null,{"children":"RwLock"}]
+22:["$","ul",null,{"children":["\n",["$","li",null,{"children":"成为read-write锁，以下read简称r，write简称w。"}],"\n",["$","li",null,{"children":"站在Java的角度与ReentrantReadWriteLock类似，读贡献，写互斥。"}],"\n",["$","li",null,{"children":"大家从如下的打印数据也可以看出来，r可以共享数据，但是w互斥。但是r与w彼此之间也是互斥的。"}],"\n"]}]
+2a:T7d3,struct GuardMemory {
+    index: i32,
+}
+fn main() {
+	let arc = Arc::new(RwLock::new(GuardMemory{ index: 0 }));
+    let mut handles = vec![];
+    for idx in 0..10 {
+        let arc = arc.clone();
+        if idx % 2 == 0 {
+            //---创建写线程
+            let mut name = "write-thread".to_string();
+            name.push_str(idx.to_string().as_str());
+
+            let handle = thread::Builder::new()
+            .name(name).spawn(move || {
+                let s = thread::current().name().unwrap().to_string();
+                println!("{}--准备获得锁", s);
+                let mut num = arc.write().unwrap();
+                println!("{}++已经获得锁", s);
+                thread::sleep(Duration::from_millis(1000 * 1));
+                num.index += 1;
+                println!("{}++准备释放锁", s);
+                drop(num);
+                thread::sleep(Duration::from_millis(100));
+                println!("{}--已经释放锁", s);
+            }).unwrap();
+            handles.push(handle);
+        } else {
+            //---创建读线程
+            let mut name = "read-thread".to_string();
+            name.push_str(idx.to_string().as_str());
+
+            let handle = thread::Builder::new()
+            .name(name).spawn(move || {
+                let s = thread::current().name().unwrap().to_string();
+                println!("{}--准备获得锁", s);
+                let mut num = arc.read().unwrap();
+                println!("{}++已经获得锁", s);
+                thread::sleep(Duration::from_millis(1000 * 1));
+                println!("{}读取数据:{}", s, num.index);
+                println!("{}++准备释放锁", s);
+                drop(num);
+                thread::sleep(Duration::from_millis(100));
+                println!("{}--已经释放锁", s);
+            }).unwrap();
+            handles.push(handle);
+        }
+    }
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    println!("Result: {:?}", arc.read().unwrap());
+}
+23:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$2a"}]}]
+24:["$","$L3",null,{"children":["$","code",null,{"className":"language-bash","children":"write-thread0--准备获得锁\nwrite-thread0++已经获得锁\nread-thread1--准备获得锁\nwrite-thread2--准备获得锁\nread-thread3--准备获得锁\nwrite-thread4--准备获得锁\nread-thread5--准备获得锁\nwrite-thread6--准备获得锁\nread-thread7--准备获得锁\nwrite-thread8--准备获得锁\nread-thread9--准备获得锁\nwrite-thread0++准备释放锁\nwrite-thread2++已经获得锁\nwrite-thread0--已经释放锁\nwrite-thread2++准备释放锁\nwrite-thread4++已经获得锁\nwrite-thread2--已经释放锁\nwrite-thread4++准备释放锁\nwrite-thread6++已经获得锁\nwrite-thread4--已经释放锁\nwrite-thread6++准备释放锁\nwrite-thread8++已经获得锁\nwrite-thread6--已经释放锁\nwrite-thread8++准备释放锁\nread-thread5++已经获得锁\nread-thread1++已经获得锁\nread-thread7++已经获得锁\nread-thread9++已经获得锁\nread-thread3++已经获得锁\nwrite-thread8--已经释放锁\nread-thread5读取数据:5\nread-thread5++准备释放锁\nread-thread1读取数据:5\nread-thread1++准备释放锁\nread-thread7读取数据:5\nread-thread7++准备释放锁\nread-thread9读取数据:5\nread-thread9++准备释放锁\nread-thread3读取数据:5\nread-thread3++准备释放锁\nread-thread5--已经释放锁\nread-thread1--已经释放锁\nread-thread7--已经释放锁\nread-thread9--已经释放锁\nread-thread3--已经释放锁\nResult: GuardMemory { index: 5 }\n"}]}]
+25:["$","nav",null,{"className":"mt-12 pt-8 max-w-2xl","children":["$","div",null,{"className":"flex flex-col sm:flex-row justify-between gap-4","children":[["$","$L2",null,{"href":"/blog/rust-ownership","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors","children":[["$","span",null,{"className":"flex items-center gap-1 text-xs text-muted-foreground","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Previous"]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust ownership"}]]}],["$","$L2",null,{"href":"/blog/rust-basic","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors text-right","children":[["$","span",null,{"className":"flex items-center justify-end gap-1 text-xs text-muted-foreground","children":["Next",["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-right size-3","aria-hidden":"true","children":[["$","path","mthhwq",{"d":"m9 18 6-6-6-6"}],"$undefined"]}]]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust basic"}]]}]]}]}]
+26:["$","script","script-0",{"src":"/_next/static/chunks/49805b192645e9aa.js","async":true}]
+27:["$","script","script-1",{"src":"/_next/static/chunks/097ca8f017d5f200.js","async":true}]
+28:["$","script","script-2",{"src":"/_next/static/chunks/e95840a5bb009f36.js","async":true}]
+29:["$","$L2b",null,{"children":["$","$2c",null,{"name":"Next.MetadataOutlet","children":"$@2d"}]}]
+2d:null

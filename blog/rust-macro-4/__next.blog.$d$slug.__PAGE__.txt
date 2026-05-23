@@ -1,0 +1,662 @@
+1:"$Sreact.fragment"
+2:I[72428,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],""]
+3:I[54216,["/_next/static/chunks/4488c633af5cd504.js","/_next/static/chunks/27cc47d97d2c7878.js","/_next/static/chunks/fb68b3d75c6cc348.js","/_next/static/chunks/a8485dc86dcf93c3.js","/_next/static/chunks/49805b192645e9aa.js","/_next/static/chunks/097ca8f017d5f200.js","/_next/static/chunks/e95840a5bb009f36.js"],"CodeBlock",1]
+27:I[26487,["/_next/static/chunks/77e7100737f17bb7.js","/_next/static/chunks/f91053d8cc2847b4.js"],"OutletBoundary"]
+28:"$Sreact.suspense"
+4:T4f2,use proc_macro::TokenStream;
+use proc_macro2;
+use syn::*;
+
+#[proc_macro]
+pub fn seq(input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as SeqParser);
+    return TokenStream::new();
+}
+
+struct SeqParser {//自定义语法树节点
+    variable_ident: syn::Ident,
+    start: isize,
+    end: isize,
+    body: proc_macro2::TokenStream,
+}
+
+impl syn::parse::Parse for SeqParser {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self>{
+        let variable_ident: syn::Ident = input.parse()?;        //解析当前游标对应的变量
+        input.parse::<syn::Token!(in)>()?;                      //解析当前游标对应的token in
+        let start: syn::LitInt = input.parse()?;                //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        input.parse::<syn::Token!(..)>()?;                      //解析当前游标对应的token ..
+        let end: syn::LitInt = input.parse()?;                  //假定当前游标对应的是一个可以解析为整形数  字面量的token
+
+        Ok(SeqParser{
+            variable_ident,
+            start: start.base10_parse()?,
+            end: end.base10_parse()?,
+            body: proc_macro2::TokenStream::new(),
+        })
+    }
+}
+0:{"buildId":"ephH8wRFzzwpIEjAQmXME","rsc":["$","$1","c",{"children":[["$","section",null,{"id":"blog","children":[["$","script",null,{"type":"application/ld+json","suppressHydrationWarning":true,"dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"rust macro proc-macro-workshop solve problems 3\",\"datePublished\":\"2023-09-23\",\"dateModified\":\"2023-09-23\",\"description\":\"| 名字 | 版本号       | | ---- | ------------ | | rust | 1.69.0       | | OS   | ubuntu 22.04 |\",\"image\":\"https://rockjl.github.io/blog/rust-macro-4/opengraph-image\",\"url\":\"https://rockjl.github.io/blog/rust-macro-4\",\"author\":{\"@type\":\"Person\",\"name\":\"Jiang Liang\"}}"}}],["$","div",null,{"className":"flex justify-start gap-4 items-center","children":["$","$L2",null,{"href":"/blog","className":"text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-lg px-2 py-1 inline-flex items-center gap-1 mb-6 group","aria-label":"Back to Blog","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3 group-hover:-translate-x-px transition-transform","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Back to Blog"]}]}],["$","div",null,{"className":"flex flex-col gap-4","children":[["$","h1",null,{"className":"title font-semibold text-3xl md:text-4xl tracking-tighter leading-tight","children":"rust macro proc-macro-workshop solve problems 3"}],["$","p",null,{"className":"text-sm text-muted-foreground","children":"September 23, 2023"}]]}],["$","div",null,{"className":"my-6 flex w-full items-center","children":["$","div",null,{"className":"flex-1 h-px bg-border","style":{"maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)","WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}}]}],["$","article",null,{"className":"prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert","children":[["$","div",null,{"className":"my-6 border border-border rounded-xl overflow-hidden","children":["$","div",null,{"className":"w-full overflow-x-auto","children":["$","table",null,{"className":"m-0! w-full min-w-full border-separate border-spacing-0","children":[["$","thead",null,{"children":["$","tr",null,{"children":[["$","th",null,{"children":"名字"}],["$","th",null,{"children":"版本号"}]]}]}],["$","tbody",null,{"children":[["$","tr",null,{"children":[["$","td",null,{"children":"rust"}],["$","td",null,{"children":"1.69.0"}]]}],["$","tr",null,{"children":[["$","td",null,{"children":"OS"}],["$","td",null,{"children":"ubuntu 22.04"}]]}]]}]]}]}]}],"\n",["$","p",null,{"children":"seq这个大题类目处理的是函数式的过程宏。"}],"\n",["$","h1",null,{"children":"第一题：01-parse-header.rs"}],"\n",["$","p",null,{"children":"第一关比较简单，只是用来检测函数式过程宏时候存在，内容时候判断了，时候生成了它不管。"}],"\n",["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$4"}]}],"\n","$L5","\n","$L6","\n","$L7","\n","$L8","\n","$L9","\n","$La","\n","$Lb","\n","$Lc","\n","$Ld","\n","$Le","\n","$Lf","\n","$L10","\n","$L11","\n","$L12","\n","$L13","\n","$L14","\n","$L15","\n","$L16","\n","$L17","\n","$L18","\n","$L19","\n","$L1a","\n","$L1b"]}],"$L1c"]}],["$L1d","$L1e","$L1f"],"$L20"]}],"loading":null,"isPartial":false}
+5:["$","h1",null,{"children":"第二题：02-parse-body.rs"}]
+6:["$","p",null,{"children":"第二关实际上讲得就是函数式过程宏的函数体时候已经使用TokenStream保存起来了。如果是，就会通过。"}]
+21:T5b9,use proc_macro::TokenStream;
+use proc_macro2;
+use syn::*;
+
+#[proc_macro]
+pub fn seq(input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as SeqParser);
+    return TokenStream::new();
+}
+
+struct SeqParser {//自定义语法树节点
+    variable_ident: syn::Ident,
+    start: isize,
+    end: isize,
+    body: proc_macro2::TokenStream,
+}
+
+impl syn::parse::Parse for SeqParser {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self>{
+        let variable_ident: syn::Ident = input.parse()?;        //解析当前游标对应的变量
+        input.parse::<syn::Token!(in)>()?;                      //解析当前游标对应的token in
+        let start: syn::LitInt = input.parse()?;                //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        input.parse::<syn::Token!(..)>()?;                      //解析当前游标对应的token ..
+        let end: syn::LitInt = input.parse()?;                  //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        
+        let body_buf;
+        syn::braced!(body_buf in input);                        //通过宏braced!把当前游标之后的整个代码块读取过来。
+        let body: proc_macro2::TokenStream = body_buf.parse()?;
+
+        Ok(SeqParser{
+            variable_ident,
+            start: start.base10_parse()?,
+            end: end.base10_parse()?,
+            body,
+        })
+    }
+}
+7:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$21"}]}]
+8:["$","h1",null,{"children":"第三关：03-expand-four-errors"}]
+9:["$","p",null,{"children":"这一小官要求按照题目生成指定重复次数的函数式过程宏的函数体TokenStrem。只要能与错误提示输出一致就算通过了。小编这里也是根据bilibili上面的大神来作的这个题目，小编认为可能是由于rust版本升级的原因，错误提示的内容稍微有了不一样，所以这关没有通过，我们稍微修改一下错误提示就可以了。"}]
+22:Tab7,use proc_macro::TokenStream;
+use proc_macro2;
+use syn;
+
+#[proc_macro]
+pub fn seq(input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as SeqParser);
+    let mut ret = proc_macro2::TokenStream::new();
+    for i in st.start..st.end {
+        ret.extend(st.expand(&st.body, i));
+    }
+    return ret.into();
+}
+
+struct SeqParser {//自定义语法树节点
+    variable_ident: syn::Ident,
+    start: isize,
+    end: isize,
+    body: proc_macro2::TokenStream,
+}
+
+impl syn::parse::Parse for SeqParser {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self>{
+        let variable_ident: syn::Ident = input.parse()?;        //解析当前游标对应的变量
+        input.parse::<syn::Token!(in)>()?;                      //解析当前游标对应的token in
+        let start: syn::LitInt = input.parse()?;                //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        input.parse::<syn::Token!(..)>()?;                      //解析当前游标对应的token ..
+        let end: syn::LitInt = input.parse()?;                  //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        
+        let body_buf;
+        syn::braced!(body_buf in input);                        //通过宏braced!把当前游标之后的整个代码块读取过来。
+        let body: proc_macro2::TokenStream = body_buf.parse()?;
+
+        Ok(SeqParser{
+            variable_ident,
+            start: start.base10_parse()?,
+            end: end.base10_parse()?,
+            body,
+        })
+    }
+}
+
+impl SeqParser {
+    fn expand(&self, ts: &proc_macro2::TokenStream, n: isize) -> proc_macro2::TokenStream {
+        let buf = ts.clone().into_iter().collect::<Vec<_>>();
+        let mut ret = proc_macro2::TokenStream::new();
+
+        for idx in 0..buf.len() {
+            let tree_node = &buf[idx];
+            match tree_node {
+                proc_macro2::TokenTree::Group(g) => {
+                    let new_stream = self.expand(&g.stream(), n);
+                    let wrap_in_group = proc_macro2::Group::new(g.delimiter(), new_stream);
+                    ret.extend(quote::quote!(#wrap_in_group));
+                }
+                proc_macro2::TokenTree::Ident(i) => {
+                    if i == &self.variable_ident {
+                        let new_ident = proc_macro2::Literal::i64_unsuffixed(n as i64);
+                        ret.extend(quote::quote!(#new_ident));
+                    } else {
+                        ret.extend(quote::quote!(#tree_node));
+                    }
+                }
+                _ => {
+                    ret.extend(quote::quote!(#tree_node));
+                }
+            }
+        }
+        ret
+    }
+}
+a:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$22"}]}]
+b:["$","p",null,{"children":"错误提示"}]
+23:T4bb,error: error number 0
+  --> tests/03-expand-four-errors.rs:19:1
+   |
+19 | / seq!(N in 0..4 {
+20 | |     compile_error!(concat!("error number ", stringify!(N)));
+21 | | });
+   | |__^
+   |
+   = note: this error originates in the macro `seq` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: error number 1
+  --> tests/03-expand-four-errors.rs:19:1
+   |
+19 | / seq!(N in 0..4 {
+20 | |     compile_error!(concat!("error number ", stringify!(N)));
+21 | | });
+   | |__^
+   |
+   = note: this error originates in the macro `seq` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: error number 2
+  --> tests/03-expand-four-errors.rs:19:1
+   |
+19 | / seq!(N in 0..4 {
+20 | |     compile_error!(concat!("error number ", stringify!(N)));
+21 | | });
+   | |__^
+   |
+   = note: this error originates in the macro `seq` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: error number 3
+  --> tests/03-expand-four-errors.rs:19:1
+   |
+19 | / seq!(N in 0..4 {
+20 | |     compile_error!(concat!("error number ", stringify!(N)));
+21 | | });
+   | |__^
+   |
+   = note: this error originates in the macro `seq` (in Nightly builds, run with -Z macro-backtrace for more info)
+c:["$","$L3",null,{"children":["$","code",null,{"className":"language-bash","children":"$23"}]}]
+d:["$","h1",null,{"children":"第四关：04-paste-ident"}]
+e:["$","p",null,{"children":"通过函数式过程宏动态生成rust函数。这里大家可以在主目录通过cargo expand命令，查看生成后的效果。"}]
+24:T115f,use proc_macro::TokenStream;
+use proc_macro2;
+use syn;
+
+#[proc_macro]
+pub fn seq(input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as SeqParser);
+    let mut ret = proc_macro2::TokenStream::new();
+    for i in st.start..st.end {
+        ret.extend(st.expand(&st.body, i));
+    }
+    return ret.into();
+}
+
+struct SeqParser {//自定义语法树节点
+    variable_ident: syn::Ident,
+    start: isize,
+    end: isize,
+    body: proc_macro2::TokenStream,
+}
+
+impl syn::parse::Parse for SeqParser {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self>{
+        let variable_ident: syn::Ident = input.parse()?;        //解析当前游标对应的变量
+        input.parse::<syn::Token!(in)>()?;                      //解析当前游标对应的token in
+        let start: syn::LitInt = input.parse()?;                //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        input.parse::<syn::Token!(..)>()?;                      //解析当前游标对应的token ..
+        let end: syn::LitInt = input.parse()?;                  //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        
+        let body_buf;
+        syn::braced!(body_buf in input);                        //通过宏braced!把当前游标之后的整个代码块读取过来。
+        let body: proc_macro2::TokenStream = body_buf.parse()?;
+
+        Ok(SeqParser{
+            variable_ident,
+            start: start.base10_parse()?,
+            end: end.base10_parse()?,
+            body,
+        })
+    }
+}
+
+impl SeqParser {
+    fn expand(&self, ts: &proc_macro2::TokenStream, n: isize) -> proc_macro2::TokenStream {
+        let buf = ts.clone().into_iter().collect::<Vec<_>>();
+        let mut ret = proc_macro2::TokenStream::new();
+
+        let mut idx = 0;
+        while idx < buf.len() {
+            let tree_node = &buf[idx];
+            match tree_node {
+                proc_macro2::TokenTree::Group(g) => {
+                    let new_stream = self.expand(&g.stream(), n);
+                    let wrap_in_group = proc_macro2::Group::new(g.delimiter(), new_stream);
+                    ret.extend(quote::quote!(#wrap_in_group));
+                }
+                proc_macro2::TokenTree::Ident(prefix) => {
+                    if idx + 2 < buf.len() {
+                        if let proc_macro2::TokenTree::Punct(p) = &buf[idx + 1] {
+                            if p.as_char() == '~' {
+                                if let proc_macro2::TokenTree::Ident(i) = &buf[idx + 2] {
+                                    /*
+                                    这里通过三级匹配已经把 f~N 这三个匹配出来了。 prefix:f  ~:p  i:N
+                                    然后判断i时候等于用户传入的函数式过程宏的第一个标识符？
+                                    判断f 与 ~ 两个span彼此是不是紧密相连的?
+                                    判断~ 与 i 两个span彼此是不是紧密相连的？
+                                     */
+                                    if i == &self.variable_ident                    
+                                        && prefix.span().end() == p.span().start()
+                                        && p.span().end() == i.span().start() 
+                                    {
+                                        let new_ident_litral = format!("{}{}", prefix.to_string(), n);
+                                        let new_ident = proc_macro2::Ident::new(new_ident_litral.as_str(), prefix.span());
+                                        ret.extend(quote::quote!(#new_ident));
+                                        idx += 3;
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if prefix == &self.variable_ident {
+                        let new_ident = proc_macro2::Literal::i64_unsuffixed(n as i64);
+                        ret.extend(quote::quote!(#new_ident));
+                        idx += 1;
+                        continue;
+                    }
+                    ret.extend(quote::quote!(#tree_node));
+                }
+                _ => {
+                    ret.extend(quote::quote!(#tree_node));
+                }
+            }
+            idx += 1;
+        }
+        ret
+    }
+}
+f:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$24"}]}]
+10:["$","h1",null,{"children":"第五关：05-repeat-section"}]
+11:["$","p",null,{"children":"这小关考的是，在函数式过程宏内部使用自定义的开头和结尾，处理函数式过程宏的生成规则。\n题目当前是函数式过程宏内部通过自定义的#,*开头结尾形成一个循环。"}]
+25:T1d6f,use proc_macro::TokenStream;
+use proc_macro2;
+use syn;
+
+#[proc_macro]
+pub fn seq(input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as SeqParser);
+    let mut ret = proc_macro2::TokenStream::new();
+    let buffer = syn::buffer::TokenBuffer::new2(st.body.clone());
+
+    let (ret_1, expanded) = st.find_block_to_expand_and_do_expand(buffer.begin());
+    if expanded {
+        return ret_1.into();
+    }
+
+    for i in st.start..st.end {
+        ret.extend(st.expand(&st.body, i));
+    }
+    return ret.into();
+}
+
+struct SeqParser {//自定义语法树节点
+    variable_ident: syn::Ident,
+    start: isize,
+    end: isize,
+    body: proc_macro2::TokenStream,
+}
+
+impl syn::parse::Parse for SeqParser {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self>{
+        let variable_ident: syn::Ident = input.parse()?;        //解析当前游标对应的变量
+        input.parse::<syn::Token!(in)>()?;                      //解析当前游标对应的token in
+        let start: syn::LitInt = input.parse()?;                //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        input.parse::<syn::Token!(..)>()?;                      //解析当前游标对应的token ..
+        let end: syn::LitInt = input.parse()?;                  //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        
+        let body_buf;
+        syn::braced!(body_buf in input);                        //通过宏braced!把当前游标之后的整个代码块读取过来。
+        let body: proc_macro2::TokenStream = body_buf.parse()?;
+
+        Ok(SeqParser{
+            variable_ident,
+            start: start.base10_parse()?,
+            end: end.base10_parse()?,
+            body,
+        })
+    }
+}
+
+impl SeqParser {
+    fn expand(&self, ts: &proc_macro2::TokenStream, n: isize) -> proc_macro2::TokenStream {
+        let buf = ts.clone().into_iter().collect::<Vec<_>>();
+        let mut ret = proc_macro2::TokenStream::new();
+
+        let mut idx = 0;
+        while idx < buf.len() {
+            let tree_node = &buf[idx];
+            match tree_node {
+                proc_macro2::TokenTree::Group(g) => {
+                    let new_stream = self.expand(&g.stream(), n);
+                    let wrap_in_group = proc_macro2::Group::new(g.delimiter(), new_stream);
+                    ret.extend(quote::quote!(#wrap_in_group));
+                }
+                proc_macro2::TokenTree::Ident(prefix) => {
+                    if idx + 2 < buf.len() {
+                        if let proc_macro2::TokenTree::Punct(p) = &buf[idx + 1] {
+                            if p.as_char() == '~' {
+                                if let proc_macro2::TokenTree::Ident(i) = &buf[idx + 2] {
+                                    /*
+                                    这里通过三级匹配已经把 f~N 这三个匹配出来了。 prefix:f  ~:p  i:N
+                                    然后判断i时候等于用户传入的函数式过程宏的第一个标识符？
+                                    判断f 与 ~ 两个span彼此是不是紧密相连的?
+                                    判断~ 与 i 两个span彼此是不是紧密相连的？
+                                     */
+                                    if i == &self.variable_ident                    
+                                        && prefix.span().end() == p.span().start()
+                                        && p.span().end() == i.span().start() 
+                                    {
+                                        let new_ident_litral = format!("{}{}", prefix.to_string(), n);
+                                        let new_ident = proc_macro2::Ident::new(new_ident_litral.as_str(), prefix.span());
+                                        ret.extend(quote::quote!(#new_ident));
+                                        idx += 3;
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if prefix == &self.variable_ident {
+                        let new_ident = proc_macro2::Literal::i64_unsuffixed(n as i64);
+                        ret.extend(quote::quote!(#new_ident));
+                        idx += 1;
+                        continue;
+                    }
+                    ret.extend(quote::quote!(#tree_node));
+                }
+                _ => {
+                    ret.extend(quote::quote!(#tree_node));
+                }
+            }
+            idx += 1;
+        }
+        ret
+    }
+    fn find_block_to_expand_and_do_expand(&self, c: syn::buffer::Cursor) -> (proc_macro2::TokenStream, bool) {
+        let mut found = false;
+        let mut ret = proc_macro2::TokenStream::new();
+
+        let mut cursor = c;
+        while !cursor.eof() {
+            if let Some((punct_prefix, cursor_1)) = cursor.punct() {
+                if punct_prefix.as_char() == '#' {
+                    if let Some((group_cur, _, cursor_2)) = cursor_1.group(proc_macro2::Delimiter::Parenthesis) {
+                        if let Some((punct_suffix, cursor_3)) = cursor_2.punct() {
+                            if punct_suffix.as_char() == '*' {
+                                for i in self.start..self.end {
+                                    let t = self.expand(&group_cur.token_stream(), i);
+                                    ret.extend(t);
+                                }
+                                cursor = cursor_3;
+                                found = true;
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if let Some((group_cur, _, next_cur)) = cursor.group(proc_macro2::Delimiter::Brace) {
+                let (t, f) = self.find_block_to_expand_and_do_expand(group_cur);
+                found = f;
+                ret.extend(quote::quote!({#t}));
+                cursor = next_cur;
+                continue;
+            } else if let Some((group_cur, _, next_cur)) = cursor.group(proc_macro2::Delimiter::Bracket) {
+                let (t, f) = self.find_block_to_expand_and_do_expand(group_cur);
+                found = f;
+                ret.extend(quote::quote!([#t]));
+                cursor = next_cur;
+                continue;
+            } else if let Some((group_cur, _, next_cur)) = cursor.group(proc_macro2::Delimiter::Parenthesis) {
+                let (t, f) = self.find_block_to_expand_and_do_expand(group_cur);
+                found = f;
+                ret.extend(quote::quote!((#t)));
+                cursor = next_cur;
+                continue;
+            } else if let Some((punct, next_cur)) = cursor.punct() {
+                ret.extend(quote::quote!(#punct));
+                cursor = next_cur;
+                continue;
+            } else if let Some((ident, next_cur)) = cursor.ident() {
+                ret.extend(quote::quote!(#ident));
+                cursor = next_cur;
+                continue;
+            } else if let Some((literal, next_cur)) = cursor.literal() {
+                ret.extend(quote::quote!(#literal));
+                cursor = next_cur;
+                continue;
+            } else if let Some((lifetime, next_cur)) = cursor.lifetime() {
+                ret.extend(quote::quote!(#lifetime));
+                cursor = next_cur;
+                continue;
+            }
+        }
+
+        (ret, found)
+    }
+}
+12:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$25"}]}]
+13:["$","h1",null,{"children":"第六关：06-init-array"}]
+14:["$","p",null,{"children":"由于我们之前的代码就可以成功生成当前过程宏的代码，所以在这里不再多做功了。"}]
+15:["$","h1",null,{"children":"第七关：07-inclusive-range"}]
+16:["$","p",null,{"children":"这一小关实际上只是比之前的多了一个有可能会有“=”的处理。"}]
+26:T1eb4,use proc_macro::TokenStream;
+use proc_macro2;
+use syn::{self, Result};
+
+#[proc_macro]
+pub fn seq(input: TokenStream) -> TokenStream {
+    let st = syn::parse_macro_input!(input as SeqParser);
+    let mut ret = proc_macro2::TokenStream::new();
+    let buffer = syn::buffer::TokenBuffer::new2(st.body.clone());
+
+    let (ret_1, expanded) = st.find_block_to_expand_and_do_expand(buffer.begin());
+    if expanded {
+        return ret_1.into();
+    }
+
+    for i in st.start..st.end {
+        ret.extend(st.expand(&st.body, i));
+    }
+    return ret.into();
+}
+
+struct SeqParser {//自定义语法树节点
+    variable_ident: syn::Ident,
+    start: isize,
+    end: isize,
+    body: proc_macro2::TokenStream,
+}
+
+impl syn::parse::Parse for SeqParser {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self>{
+        let variable_ident: syn::Ident = input.parse()?;        //解析当前游标对应的变量
+        input.parse::<syn::Token!(in)>()?;                      //解析当前游标对应的token in
+        let start: syn::LitInt = input.parse()?;                //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        input.parse::<syn::Token!(..)>()?;                      //解析当前游标对应的token ..
+        let mut inc = false;
+        if input.peek(syn::Token!(=)) {                         //通过peek判断当前游标对应的token时候是 = ？
+            input.parse::<syn::Token!(=)>()?;
+            inc = true;
+        }
+        let end: syn::LitInt = input.parse()?;                  //假定当前游标对应的是一个可以解析为整形数  字面量的token
+        
+        let body_buf;
+        syn::braced!(body_buf in input);                        //通过宏braced!把当前游标之后的整个代码块读取过来。
+        let body: proc_macro2::TokenStream = body_buf.parse()?;
+
+        let mut t = SeqParser{
+            variable_ident,
+            start: start.base10_parse()?,
+            end: end.base10_parse()?,
+            body,
+        };
+
+        if inc {
+            t.end += 1;
+        }
+
+        Ok(t)
+    }
+}
+
+impl SeqParser {
+    fn expand(&self, ts: &proc_macro2::TokenStream, n: isize) -> proc_macro2::TokenStream {
+        let buf = ts.clone().into_iter().collect::<Vec<_>>();
+        let mut ret = proc_macro2::TokenStream::new();
+
+        let mut idx = 0;
+        while idx < buf.len() {
+            let tree_node = &buf[idx];
+            match tree_node {
+                proc_macro2::TokenTree::Group(g) => {
+                    let new_stream = self.expand(&g.stream(), n);
+                    let wrap_in_group = proc_macro2::Group::new(g.delimiter(), new_stream);
+                    ret.extend(quote::quote!(#wrap_in_group));
+                }
+                proc_macro2::TokenTree::Ident(prefix) => {
+                    if idx + 2 < buf.len() {
+                        if let proc_macro2::TokenTree::Punct(p) = &buf[idx + 1] {
+                            if p.as_char() == '~' {
+                                if let proc_macro2::TokenTree::Ident(i) = &buf[idx + 2] {
+                                    /*
+                                    这里通过三级匹配已经把 f~N 这三个匹配出来了。 prefix:f  ~:p  i:N
+                                    然后判断i时候等于用户传入的函数式过程宏的第一个标识符？
+                                    判断f 与 ~ 两个span彼此是不是紧密相连的?
+                                    判断~ 与 i 两个span彼此是不是紧密相连的？
+                                     */
+                                    if i == &self.variable_ident                    
+                                        && prefix.span().end() == p.span().start()
+                                        && p.span().end() == i.span().start() 
+                                    {
+                                        let new_ident_litral = format!("{}{}", prefix.to_string(), n);
+                                        let new_ident = proc_macro2::Ident::new(new_ident_litral.as_str(), prefix.span());
+                                        ret.extend(quote::quote!(#new_ident));
+                                        idx += 3;
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if prefix == &self.variable_ident {
+                        let new_ident = proc_macro2::Literal::i64_unsuffixed(n as i64);
+                        ret.extend(quote::quote!(#new_ident));
+                        idx += 1;
+                        continue;
+                    }
+                    ret.extend(quote::quote!(#tree_node));
+                }
+                _ => {
+                    ret.extend(quote::quote!(#tree_node));
+                }
+            }
+            idx += 1;
+        }
+        ret
+    }
+    fn find_block_to_expand_and_do_expand(&self, c: syn::buffer::Cursor) -> (proc_macro2::TokenStream, bool) {
+        let mut found = false;
+        let mut ret = proc_macro2::TokenStream::new();
+
+        let mut cursor = c;
+        while !cursor.eof() {
+            if let Some((punct_prefix, cursor_1)) = cursor.punct() {
+                if punct_prefix.as_char() == '#' {
+                    if let Some((group_cur, _, cursor_2)) = cursor_1.group(proc_macro2::Delimiter::Parenthesis) {
+                        if let Some((punct_suffix, cursor_3)) = cursor_2.punct() {
+                            if punct_suffix.as_char() == '*' {
+                                for i in self.start..self.end {
+                                    let t = self.expand(&group_cur.token_stream(), i);
+                                    ret.extend(t);
+                                }
+                                cursor = cursor_3;
+                                found = true;
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if let Some((group_cur, _, next_cur)) = cursor.group(proc_macro2::Delimiter::Brace) {
+                let (t, f) = self.find_block_to_expand_and_do_expand(group_cur);
+                found = f;
+                ret.extend(quote::quote!({#t}));
+                cursor = next_cur;
+                continue;
+            } else if let Some((group_cur, _, next_cur)) = cursor.group(proc_macro2::Delimiter::Bracket) {
+                let (t, f) = self.find_block_to_expand_and_do_expand(group_cur);
+                found = f;
+                ret.extend(quote::quote!([#t]));
+                cursor = next_cur;
+                continue;
+            } else if let Some((group_cur, _, next_cur)) = cursor.group(proc_macro2::Delimiter::Parenthesis) {
+                let (t, f) = self.find_block_to_expand_and_do_expand(group_cur);
+                found = f;
+                ret.extend(quote::quote!((#t)));
+                cursor = next_cur;
+                continue;
+            } else if let Some((punct, next_cur)) = cursor.punct() {
+                ret.extend(quote::quote!(#punct));
+                cursor = next_cur;
+                continue;
+            } else if let Some((ident, next_cur)) = cursor.ident() {
+                ret.extend(quote::quote!(#ident));
+                cursor = next_cur;
+                continue;
+            } else if let Some((literal, next_cur)) = cursor.literal() {
+                ret.extend(quote::quote!(#literal));
+                cursor = next_cur;
+                continue;
+            } else if let Some((lifetime, next_cur)) = cursor.lifetime() {
+                ret.extend(quote::quote!(#lifetime));
+                cursor = next_cur;
+                continue;
+            }
+        }
+
+        (ret, found)
+    }
+}
+17:["$","$L3",null,{"children":["$","code",null,{"className":"language-rust","children":"$26"}]}]
+18:["$","h1",null,{"children":"第八关：08-ident-span"}]
+19:["$","p",null,{"children":"早在我们做第四关的时候，已经获取了第一个标识符的span作为新ident的span。所以错误信息是不会错的。所以可以直接通过。"}]
+1a:["$","h1",null,{"children":"第九关：09-interaction-with-macrorules"}]
+1b:["$","p",null,{"children":"这一关函数式过程宏中使用了常量，普通的宏中又包含了函数式过程宏。我们的测试代码可以直接通过。这里就不多说了。"}]
+1c:["$","nav",null,{"className":"mt-12 pt-8 max-w-2xl","children":["$","div",null,{"className":"flex flex-col sm:flex-row justify-between gap-4","children":[["$","$L2",null,{"href":"/blog/rust-macro-5","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors","children":[["$","span",null,{"className":"flex items-center gap-1 text-xs text-muted-foreground","children":[["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-left size-3","aria-hidden":"true","children":[["$","path","1wnfg3",{"d":"m15 18-6-6 6-6"}],"$undefined"]}],"Previous"]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust macro proc-macro-workshop solve problems 3"}]]}],["$","$L2",null,{"href":"/blog/rust-macro-3","className":"group flex-1 flex flex-col gap-1 p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors text-right","children":[["$","span",null,{"className":"flex items-center justify-end gap-1 text-xs text-muted-foreground","children":["Next",["$","svg",null,{"xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-chevron-right size-3","aria-hidden":"true","children":[["$","path","mthhwq",{"d":"m9 18 6-6-6-6"}],"$undefined"]}]]}],["$","span",null,{"className":"text-sm font-medium group-hover:text-foreground transition-colors whitespace-normal wrap-break-word","children":"rust macro proc-macro-workshop solve problems 2"}]]}]]}]}]
+1d:["$","script","script-0",{"src":"/_next/static/chunks/49805b192645e9aa.js","async":true}]
+1e:["$","script","script-1",{"src":"/_next/static/chunks/097ca8f017d5f200.js","async":true}]
+1f:["$","script","script-2",{"src":"/_next/static/chunks/e95840a5bb009f36.js","async":true}]
+20:["$","$L27",null,{"children":["$","$28",null,{"name":"Next.MetadataOutlet","children":"$@29"}]}]
+29:null
